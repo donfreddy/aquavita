@@ -1,10 +1,11 @@
-import { EnumEnv } from '../common/helpers/enum.helper';
+import { EnumEnv } from '../common/helpers';
 import { config } from 'dotenv';
 
 config();
 
 class ConfigService {
-  constructor(private env: { [k: string]: string | undefined }) {}
+  constructor(private env: { [k: string]: string | undefined }) {
+  }
 
   private getValue(key: string, throwOnMissing = true): string {
     const value = this.env[key];
@@ -17,18 +18,6 @@ class ConfigService {
   public ensureValues(keys: string[]) {
     keys.forEach((k) => this.getValue(k));
     return this;
-  }
-
-  public getPort() {
-    return this.getValue('APP_PORT');
-  }
-
-  public getClientUrl() {
-    return this.getValue('CLIENT_URL');
-  }
-
-  public getAPiUrl() {
-    return this.getValue('API_URL');
   }
 
   public getFileDestination() {
@@ -54,6 +43,14 @@ class ConfigService {
   public isProduction() {
     const mode = this.getValue('APP_MODE', false);
     return mode != EnumEnv.DEV;
+  }
+
+  public getWebPortal() {
+    return this.getValue('WEB_PORTAL');
+  }
+
+  public getApiBaseUrl() {
+    return this.getValue('API_BASE_URL');
   }
 
   public getDB() {

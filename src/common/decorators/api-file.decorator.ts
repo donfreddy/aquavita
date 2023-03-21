@@ -5,9 +5,9 @@ import { imageAndPdfFileFilter } from '../helpers';
 import LocalFilesInterceptor from '../interceptors/local-files.interceptor';
 
 export function ApiFile(
-  fieldName: string = 'file',
-  required: boolean = false,
-  path: string = 'images',
+  fieldName = 'file',
+  required = false,
+  path = 'images',
   localOptions?: MulterOptions,
 ) {
   return applyDecorators(

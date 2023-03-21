@@ -7,6 +7,7 @@ import {
   NotFoundResponse,
   BadRequestResponse,
   ForbiddenResponse,
+  ConflictResponse,
 } from './api-response';
 
 enum ErrorType {
@@ -18,10 +19,11 @@ enum ErrorType {
   NO_DATA = 'NoDataError',
   BAD_REQUEST = 'BadRequestError',
   FORBIDDEN = 'ForbiddenError',
+  CONFLICT = 'ConflictError'
 }
 
 export abstract class ApiError extends Error {
-  constructor(public type: ErrorType, public message: string = 'error') {
+  protected constructor(public type: ErrorType, public message: string = 'error') {
     super(type);
   }
 
@@ -38,6 +40,8 @@ export abstract class ApiError extends Error {
         return new NotFoundResponse(err.message).send(res);
       case ErrorType.BAD_REQUEST:
         return new BadRequestResponse(err.message).send(res);
+      case ErrorType.CONFLICT:
+        return new ConflictResponse(err.message).send(res);
       case ErrorType.FORBIDDEN:
         return new ForbiddenResponse(err.message).send(res);
       default: {
@@ -79,6 +83,13 @@ export class ForbiddenError extends ApiError {
     super(ErrorType.FORBIDDEN, message);
   }
 }
+
+export class ConflictError extends ApiError {
+  constructor(message = '') {
+    super(ErrorType.CONFLICT, message);
+  }
+}
+
 
 export class NoEntryError extends ApiError {
   constructor(message = "Entry don't exists") {

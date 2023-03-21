@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { configService } from 'src/config/config.service';
-import { slugifyString } from '../helpers';
+import { slugifyString } from './helper';
 import { BadRequestError } from './api-error';
 import { extname } from 'path';
 
@@ -56,5 +56,5 @@ export const editFileName = (
  * @returns {string} Image Url
  */
 export const getImageUrl = (fileName: string): string => {
-  return `${configService.getAPiUrl()}/images/${fileName}`;
+  return `${configService.getApiBaseUrl()}/images/${fileName}`;
 };

@@ -23,7 +23,12 @@ export enum EnumOtpRaison {
 }
 
 export enum EnumQuarterTimeStatus {
-  InProgress = 'in progress',
-  Completed = 'completed',
-  Pending = 'pending',
+  IN_PROGRESS = 'In Progress',
+  PENDING = 'Pending',
+}
+
+export enum EnumTaskStatus {
+  IN_PROGRESS = 'In Progress',
+  TO_DO = 'To Do',
+  DONE = 'Done',
 }

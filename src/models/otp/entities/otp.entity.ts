@@ -20,7 +20,7 @@ export class Otp {
   @Column({ type: 'enum', enum: EnumOtpRaison })
   reason: EnumOtpRaison;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   @JoinColumn()
   user: User;
 

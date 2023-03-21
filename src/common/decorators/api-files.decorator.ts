@@ -1,14 +1,13 @@
 import { applyDecorators, UseInterceptors } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { imageAndPdfFileFilter } from '../helpers';
 import LocalFilesInterceptor from '../interceptors/local-files.interceptor';
 
 export function ApiFiles(
-  fieldName: string = 'files',
-  required: boolean = false,
-  path: string = 'images',
+  fieldName = 'files',
+  required = false,
+  path = 'images',
   localOptions?: MulterOptions,
 ) {
   return applyDecorators(

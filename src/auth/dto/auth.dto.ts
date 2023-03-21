@@ -28,20 +28,19 @@ export class ForgotPasswordDto {
 export class ResetPasswordDto {
   @IsNotEmpty()
   @IsString()
-  @MinLength(6)
   @ApiProperty({
-    description: 'The token sent to the user',
-    example: '4f546b55258a10288c7e2865051d1252b2a69823f8cd1c65144c696',
+    description: 'The otp code sent to the user',
+    example: '499696',
   })
-  readonly token: string;
+  readonly otp_code: string;
 
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty({
     description: 'The user id',
-    example: 34,
+    example: '',
   })
-  readonly user_id: number;
+  readonly user_id: string;
 
   @IsString()
   @IsNotEmpty()

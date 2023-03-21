@@ -1,8 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { EnumStatusCode } from '../helpers';
+import { IDefaultResponse } from '../interfaces/response.interface';
 
-export class SuccessResponseDto {
+export class SuccessResponseDto<T> {
   @ApiProperty({ example: EnumStatusCode.SUCCESS, enum: EnumStatusCode })
   status_code: EnumStatusCode;
 
@@ -13,7 +14,7 @@ export class SuccessResponseDto {
   message: string;
 
   @ApiProperty()
-  data: Record<string, any>;
+  data: IDefaultResponse<T>;
 }
 
 export class ErrorResponseDto {

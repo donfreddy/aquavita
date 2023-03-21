@@ -1,5 +1,4 @@
-import { NotFoundResponse } from './../../common/helpers/api-response';
-import { EnumOtpRaison } from '../../common/helpers/enum.helper';
+import { EnumOtpRaison } from '../../common/helpers';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { generateOtpCode } from 'src/common/helpers/helper';
@@ -12,22 +11,28 @@ export class OtpService {
   constructor(
     @InjectRepository(Otp)
     private otpRepo: Repository<Otp>,
-  ) {}
+  ) {
+  }
 
   /**
    * Create new OTP code for user
    *
-   * @param {User} user {User} The user that owns the OTP code
+   * @param {User} user The user that owns the OTP code
    * @param {EnumOtpRaison} raison It's from {@link EnumOtpRaison} enum type.
    *
    * @returns {Promise<Otp>}
    */
   async create(user: User, raison?: EnumOtpRaison): Promise<Otp> {
+    let newCode = generateOtpCode();
+    // make sur it's unique on database
+    while ((await this.getWhere('code', newCode)) != undefined) {
+      newCode = generateOtpCode();
+    }
     const now = new Date();
-    const expiredAt = new Date(now.getTime() + 60 * 60 * 1000); // 1 hour later
+    const expiredAt = new Date(now.getTime() + 30 * 60 * 1000); // 30min later
 
     const otp = new Otp();
-    otp.code = generateOtpCode();
+    otp.code = newCode;
     otp.user = user;
     otp.reason = raison ?? null;
     otp.created_at = now;
@@ -42,13 +47,13 @@ export class OtpService {
    * @param {any} value The value of the OTP object
    * @param {EnumOtpRaison} reason It's from {@link EnumOtpRaison} enum type.
    *
-   * @returns {Promise<Otp | null>}
+   * @returns {Promise<Otp | undefined>}
    */
   async getWhere(
     key: keyof Otp,
     value: any,
     reason?: EnumOtpRaison,
-  ): Promise<Otp | null> {
+  ): Promise<Otp | undefined> {
     if (reason) {
       return this.otpRepo.findOne({ where: { [key]: value, reason } });
     }
@@ -58,7 +63,7 @@ export class OtpService {
   /**
    * Check if an OTP (One Time Password) code is expired.
    *
-   * @param otpCode Otp object
+   * @param otp Otp object
    *
    * @returns {boolean} True if expired, false otherwise
    */

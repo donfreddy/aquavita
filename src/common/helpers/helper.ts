@@ -4,7 +4,7 @@ import * as JSZip from 'jszip';
 import * as AdmZip from 'adm-zip';
 import slugify from 'slugify';
 import * as shortid from 'shortid';
-import { configService } from '../../config/config.service';
+
 import { HttpException } from '@nestjs/common';
 
 // Define the salt length for the hash
@@ -75,6 +75,15 @@ export const generateOtpCode = (digit = 6): string => {
   return otpCode;
 };
 
+/**
+ * Get pagination limit if is more thant 100 return 100
+ *
+ * @param {number} limit Pagination to check limit
+ */
+export const getPaginationLimit = (limit: number): number => {
+  return limit > 100 ? 100 : limit;
+};
+
 export const removeFile = (filePath: string): void => {
   fs.unlink(filePath, (err) => {
     if (err) {
@@ -102,6 +111,7 @@ export const slugifyString = (slug: string): string => {
  * @returns {Promise<Uint8Array>} zip file
  */
 export const createZipFile = async (files: string[]): Promise<any> => {
+  // console.log(files);
   // // Create a new zip file
   // const zip = new JSZip();
 

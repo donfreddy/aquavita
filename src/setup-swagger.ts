@@ -20,6 +20,10 @@ export function setupSwagger(app: INestApplication): void {
       .setTermsOfService('https://swagger.io/terms/')
       .addTag('health', 'API health check: Pinging the server')
       .addTag('auth', 'Authentication to DB')
+      .addTag('users', 'Users management')
+      .addTag('quarter-times', 'Quarter time management')
+      .addTag('tasks', 'Tasks management')
+      .addTag('planning', 'Planning management')
       .addBearerAuth()
       .build(),
   );

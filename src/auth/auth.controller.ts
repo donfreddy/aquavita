@@ -1,4 +1,4 @@
-import { Body, Request, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Request, Controller, Get, Post, UseGuards, Res } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -16,6 +16,9 @@ import { Role } from '../models/role/role.enum';
 import { HasRoles } from '../models/role/role.decorator';
 import { RolesGuard } from '../models/role/role.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { Response } from 'express';
+import { ApiResponse } from '../common/decorators/response.decorator';
+import { SwaggerApiResponse } from '../common/decorators/swagger-api.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -24,29 +27,26 @@ export class AuthController {
   }
 
   @Post('/register')
+  @ApiResponse()
   @ApiOperation({ summary: 'Register a new user.' })
   @ApiOkResponse({ type: SuccessResponseDto })
   @ApiInternalServerErrorResponse({ type: ErrorResponseDto })
   @ApiBody({ description: 'Register a new user', type: CreateUserDto })
-  async registerUser(@Body() inputs: CreateUserDto): Promise<any> {
-    const result = await this.auth.register(inputs);
-    return new SuccessResponse('User registered successfully.', result);
+  async registerUser(@Res() res: Response, @Body() inputs: CreateUserDto): Promise<any> {
+    return await this.auth.register(res, inputs);
   }
 
   @Post('/login')
+  @SwaggerApiResponse()
   @ApiOperation({ summary: 'Login user with his email and password.' })
-  @ApiOkResponse({ type: SuccessResponseDto })
-  @ApiInternalServerErrorResponse({ type: ErrorResponseDto })
   @ApiBody({ description: 'Login user in to the system', type: LoginDto })
   async loginUser(@Body() inputs: LoginDto): Promise<any> {
-    const result = await this.auth.login(inputs);
-    return new SuccessResponse('User logged in successfully.', result);
+    return await this.auth.login(inputs);
   }
 
   @Post('/forgot-password')
   @ApiOperation({ summary: 'Send an email to user to reset his password.' })
-  @ApiOkResponse({ type: SuccessResponseDto })
-  @ApiInternalServerErrorResponse({ type: ErrorResponseDto })
+  @SwaggerApiResponse()
   @ApiBody({ description: 'Forgot password', type: ForgotPasswordDto })
   async forgotPassword(@Body() inputs: ForgotPasswordDto): Promise<any> {
     const result = await this.auth.forgotPassword(inputs);
@@ -54,9 +54,8 @@ export class AuthController {
   }
 
   @Post('/reset-password')
+  @SwaggerApiResponse()
   @ApiOperation({ summary: 'Reset user password' })
-  @ApiOkResponse({ type: SuccessResponseDto })
-  @ApiInternalServerErrorResponse({ type: ErrorResponseDto })
   @ApiBody({ description: 'Reset password', type: ResetPasswordDto })
   async resetPassword(@Body() inputs: ResetPasswordDto): Promise<any> {
     const result = await this.auth.resetPassword(inputs);
@@ -68,13 +67,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('admin')
   onlyAdmin(@Request() req) {
-    return req.user;
+    return new SuccessResponse('Success', req.user);
   }
 
-  @HasRoles(Role.Employee)
+  @HasRoles(Role.User)
+  @ApiResponse()
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('employee')
+  @Get('user')
   onlyUser(@Request() req) {
     return req.user;
   }

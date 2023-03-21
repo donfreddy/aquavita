@@ -34,6 +34,7 @@
     "dotenv": "^16.0.3",
     "jszip": "^3.10.1",
     "mysql": "^2.18.1",
+    "nestjs-typeorm-paginate": "^4.0.3",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "pdfkit": "^0.13.0",
@@ -41,7 +42,8 @@
     "rxjs": "^7.2.0",
     "shortid": "^2.2.16",
     "slugify": "^1.6.5",
-    "typeorm": "^0.3.12"
+    "typeorm": "^0.3.12",
+    "typeorm-polymorphic": "^0.0.10"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

@@ -1,6 +1,5 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { formatTime24 } from '../helpers';
 
 @Injectable()
 export class LogsMiddleware implements NestMiddleware {
@@ -12,9 +11,9 @@ export class LogsMiddleware implements NestMiddleware {
     response.on('finish', () => {
       const { method, originalUrl } = request;
       const { statusCode } = response;
-      const duration = Date.now() - start;
+      const duration = `\x1b[33m+${Date.now() - start}ms\x1b[89m`;
 
-      const message = `${formatTime24()} ${method} ${originalUrl} ${statusCode} ${duration}ms`;
+      const message = `${method} ${originalUrl} ${statusCode} ${duration}`;
 
       if (statusCode >= 500) {
         return this.logger.error(message);

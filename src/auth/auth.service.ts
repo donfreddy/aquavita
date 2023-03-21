@@ -1,22 +1,25 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as _ from 'lodash';
 import {
+  AuthFailureResponse,
+  BadRequestError,
   comparePasswords,
+  ConflictResponse,
+  EnumOtpRaison,
+  generateOtpCode,
   hashPassword,
+  InternalErrorResponse,
+  SuccessResponse,
 } from 'src/common/helpers';
 import { JwtPayload } from 'src/common/interfaces/auth.interface';
-import { OtpService } from 'src/models/otp/otp.service';
+// import { OtpService } from 'src/mo  ffdels/otp/otp.service';
 import { CreateUserDto } from 'src/models/user/dto/user.dto';
 import { User } from 'src/models/user/entities/user.entity';
 import { UserService } from 'src/models/user/user.service';
 import { ForgotPasswordDto, LoginDto, ResetPasswordDto } from './dto/auth.dto';
+import { Response } from 'express';
+import { OtpService } from 'src/models/otp/otp.service';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +28,8 @@ export class AuthService {
     private readonly jwt: JwtService,
     // private readonly mail: MailService,
     private readonly otp: OtpService,
-  ) {}
+  ) {
+  }
 
   async login(inputs: LoginDto): Promise<any> {
     console.log('This is the message');
@@ -33,33 +37,37 @@ export class AuthService {
     const foundUser = await this.user.getWhere('email', email);
 
     if (!foundUser) {
-      throw new UnauthorizedException('Incorrect email or password.');
+      return new AuthFailureResponse('Incorrect email or password.');
     }
 
     const isMatch = await comparePasswords(password, foundUser.password);
     if (!isMatch) {
-      throw new UnauthorizedException('Incorrect email or password.');
+      return new AuthFailureResponse('Incorrect email or password.');
     }
 
     try {
-      return await this.generateToken(foundUser);
+      return new SuccessResponse('Success', this.generateToken(foundUser));
     } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException();
+      return new InternalServerErrorException();
     }
   }
 
-  async register(inputs: CreateUserDto): Promise<any> {
-    inputs.password = await hashPassword(inputs.password);
+  async register(res: Response, inputs: CreateUserDto): Promise<any> {
+    //check if the user is an employee
+    const foundUser = await this.user.getWhere('email', inputs.email, [],false);
+    if (foundUser) {
+      return new BadRequestError('User already exists with this email.');
+    }
 
     try {
       const user = await this.user.create(inputs);
       return { user: _.pick(user, ['id', 'email']) };
+      //  return new SuccessResponse('User registered successfully.', user).send(res);
     } catch (error) {
       if (error?.code === 'ER_DUP_ENTRY') {
-        throw new ConflictException('Email already exists');
+        return new ConflictResponse('Email already exists').send(res);
       } else {
-        throw new InternalServerErrorException();
+        return new InternalErrorResponse().send(res);
       }
     }
   }
@@ -69,58 +77,48 @@ export class AuthService {
     const expiredDate = new Date(currentDate.getTime() + 60 * 60 * 1000); // 1h
 
     const user = await this.user.getWhere('email', inputs.email);
-    // const foundToken = await this.token.getTokenByUser(user);
+    const foundOtp = await this.otp.getWhere('user', user);
 
-    console.log('######## 0');
+    if (foundOtp && !foundOtp.is_used) {
+      foundOtp.created_at = currentDate;
+      foundOtp.expired_at = expiredDate;
+      await this.otp.update(foundOtp);
 
-    // if (foundToken) {
-    //   foundToken.created_at = currentDate;
-    //   foundToken.expired_at = expiredDate;
-    //   // await this.token.updateToken(foundToken);
-    //   console.log('######## 2');
+      // send mail to the user
+      // await this.mail.sendPasswordResetEmail(user, foundToken.token);
+      return { success: true };
+    }
 
-    //   // send mail to the user
-    //  // await this.mail.sendPasswordResetEmail(user, foundToken.token);
-    //   return { success: true };
-    // }
+    let newCode = generateOtpCode();
+    // make sur it's unique on database
+    while ((await this.otp.getWhere('code', newCode)) != undefined) {
+      newCode = generateOtpCode();
+    }
 
-    // const resetToken = await generateUniqueToken();
-    // console.log('######## 3');
-
-    // const newToken = new Token();
-    // newToken.token = resetToken;
-    // newToken.created_at = currentDate;
-    // newToken.expired_at = expiredDate;
-    // newToken.user = user;
-    // await this.token.createToken(newToken);
-    // console.log('######## 4');
+    // Create new otp code
+    await this.otp.create(user, EnumOtpRaison.RESET_PASSWORD);
 
     // send mail to the user
-   //  await this.mail.sendPasswordResetEmail(user, resetToken);
+    //  await this.mail.sendPasswordResetEmail(user, resetToken);
     return { success: true };
   }
 
   async resetPassword(inputs: ResetPasswordDto): Promise<any> {
-    const { token, user_id: userId, password } = inputs;
+    const { otp_code: code, user_id: userId, password } = inputs;
     const user = await this.user.getWhere('id', userId);
-    console.log(user);
 
-   // const foundToken = await this.token.getToken(token);
-    // console.log(
-    //   '🚀 ~ file: auth.service.ts:117 ~ AuthService ~ resetPassword ~ foundToken',
-    //   foundToken,
-    // );
-    // if (!foundToken && user != foundToken.user) {
-    //   throw new NotFoundException(`The token is not valid`);
-    // }
+    const foundOtp = await this.otp.getWhere('code', code);
+    if (!foundOtp && user != foundOtp.user) {
+      throw new BadRequestError(`The token is not valid`);
+    }
 
-    // if (isTokenExpired(foundToken)) {
-    //   throw new BadRequestException(`The token has expired`);
-    // }
+    if (await this.otp.isExpired(foundOtp)) {
+      throw new BadRequestError(`The otp code has expired`);
+    }
 
     const isPasswordMatch = await comparePasswords(password, user.password);
     if (isPasswordMatch) {
-      throw new BadRequestException(
+      throw new BadRequestError(
         'You cannot reset your password with the existing password',
       );
     }
@@ -136,11 +134,12 @@ export class AuthService {
   ): Promise<{ user: User; token: string }> {
     const payload: JwtPayload = { sub: user.id, email: user.email };
     const token = this.jwt.sign(payload);
-    return { user: _.omit(user, ['password']), token };
+
+    return { user, token };
   }
 
   async validateUser(payload: JwtPayload): Promise<User> {
-    const user = await this.user.getWhere('email', payload.email, false);
+    const user = await this.user.getWhere('email', payload.email, [], false);
     if (!user) {
       throw new UnauthorizedException();
     }

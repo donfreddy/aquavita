@@ -1,7 +1,12 @@
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { Role } from '../../role/role.enum';
 
 export class CreateUserDto {
   @IsString()
@@ -32,27 +37,33 @@ export class CreateUserDto {
   @ApiProperty({ type: 'string', example: '', required: false })
   phone: string;
 
-  @IsArray()
+  @IsString()
   @IsNotEmpty()
   @IsOptional()
-  @ApiProperty({ type: 'enum', enum: Role, example: [Role.Employee] })
-  roles: Role[];
-}
-
-export class UpdateUserDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({ type: 'string', example: 'John', required: true })
-  first_name: string;
+  @ApiProperty({ type: 'string', example: 'Manutentionnaire', required: false })
+  job: string;
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ type: 'string', example: 'Doe', required: true })
-  last_name: string;
+  @IsOptional()
+  @ApiProperty({
+    description: 'Hiring date',
+    required: false,
+    example: '2020-10-01',
+  })
+  hiring_date: string;
 
-  @IsEmail()
+  @IsString()
   @IsNotEmpty()
-  @Transform(({ value }) => value?.toLowerCase().trim())
-  @ApiProperty({ type: 'string', example: 'johndoe@gmail.com', required: true })
-  email: string;
+  @IsOptional()
+  @ApiProperty({ type: 'string', example: 'Douala', required: false })
+  city: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({ type: 'string', example: 'Bonaberi', required: false })
+  neighborhood: string;
 }
+
+export class UpdateUserDto extends PartialType(CreateUserDto) {}

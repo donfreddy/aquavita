@@ -1,19 +1,13 @@
-import {
-  Entity,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../role/role.enum';
+import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
+import { EnumGender } from '../../../common/helpers';
+import { Task } from 'src/models/task/entities/task.entity';
+import { UserQuarterTime } from '../../../common/entities/user-quarter-time.entity';
 
 @Entity('users')
-export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class User extends AquavitaEntity {
   @Column()
   first_name: string;
 
@@ -25,20 +19,44 @@ export class User {
 
   @Exclude()
   @Column()
-  password?: string;
+  password: string;
 
   @Column({ nullable: true })
   phone: string;
 
-  @Column({ type: 'enum', enum: Role, array: true, default: [Role.Employee] })
+  @Column({ nullable: true })
+  city: string;
+
+  @Column({ nullable: true })
+  neighborhood: string;
+
+  @Column({ nullable: true })
+  hiring_date: Date;
+
+  @Column({ nullable: true })
+  job: string;
+
+  @Column({
+    type: 'enum',
+    enum: EnumGender,
+    default: EnumGender.UNSPECIFIED,
+  })
+  gender: EnumGender;
+
+  @Exclude()
+  @Column({ default: false })
+  has_change_pwd: boolean;
+
+  @Exclude()
+  @Column({ default: 'user' })
+  owner: string;
+
+  @Column({ type: 'simple-array' })
   roles: Role[];
 
-  @CreateDateColumn({ type: 'timestamp' })
-  created_at: Date;
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 
-  @UpdateDateColumn({ type: 'timestamp' })
-  updated_at: Date;
-
-  @DeleteDateColumn({ type: 'timestamp' })
-  deleted_at: Date;
+  @Column({ type: 'simple-array', nullable: true })
+  planning: UserQuarterTime[];
 }

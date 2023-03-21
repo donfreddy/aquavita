@@ -7,7 +7,8 @@ abstract class ApiResponse {
     protected status_code: EnumStatusCode,
     protected status: HttpStatus,
     protected message: string,
-  ) {}
+  ) {
+  }
 
   protected prepare<T extends ApiResponse>(
     res: Response,
@@ -34,6 +35,12 @@ abstract class ApiResponse {
 export class AuthFailureResponse extends ApiResponse {
   constructor(message = 'Authentication Failure') {
     super(EnumStatusCode.FAILURE, HttpStatus.UNAUTHORIZED, message);
+  }
+}
+
+export class ConflictResponse extends ApiResponse {
+  constructor(message = 'Conflict') {
+    super(EnumStatusCode.FAILURE, HttpStatus.CONFLICT, message);
   }
 }
 

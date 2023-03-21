@@ -11,10 +11,13 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { configService } from '../config/config.service';
 import { JwtModule } from '@nestjs/jwt';
+import { QuarterTimeService } from '../models/quater-time/quarter-time.service';
+import { QuarterTime } from '../models/quater-time/entities/quarter-time.entity';
+import { UserQuarterTime } from '../common/entities/user-quarter-time.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Otp]),
+    TypeOrmModule.forFeature([User, Otp,QuarterTime,UserQuarterTime,User]),
     PassportModule,
     JwtModule.register({
       secret: configService.getJWT().secretKey,
@@ -24,7 +27,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, MailService, OtpService, UserService],
+  providers: [AuthService, JwtStrategy, MailService, OtpService, UserService, QuarterTimeService],
   exports: [AuthService, JwtStrategy, MailService, OtpService, UserService],
 })
 export class AuthModule {

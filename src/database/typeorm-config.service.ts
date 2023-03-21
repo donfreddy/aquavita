@@ -5,7 +5,8 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor() {}
+  constructor() {//
+  }
 
   createTypeOrmOptions(): MysqlConnectionOptions {
     return {
@@ -17,7 +18,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       database: configService.getDB().database,
       synchronize: true,
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-      logging: ['error'],
+      // logging: ['error'],
     } as MysqlConnectionOptions;
   }
 }
