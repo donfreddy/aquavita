@@ -10,6 +10,7 @@ deploy-railway:
   environment: production
   script:
     - echo "Deploying application..."
+    - echo "Variables are '$RAILWAY_TOKEN' and '$RAILWAY_SERVICE_NAME'"
     - apt-get update && apt-get install -y curl
     - curl -fsSL https://railway.app/install.sh | sh
     - railway up --service=$RAILWAY_SERVICE_NAME -d
