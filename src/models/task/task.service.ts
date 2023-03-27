@@ -5,6 +5,7 @@ import { DeepPartial, Repository } from 'typeorm';
 import { Task } from './entities/task.entity';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { UserService } from '../user/user.service';
+import { QuarterTimeService } from '../quater-time/quarter-time.service';
 
 @Injectable()
 export class TaskService {
@@ -12,11 +13,13 @@ export class TaskService {
     @InjectRepository(Task)
     private readonly taskRepo: Repository<Task>,
     private readonly userService: UserService,
+    private readonly quarterTimeService: QuarterTimeService,
   ) {
   }
 
   // Create a new task
   async create(inputs: CreateTaskDto): Promise<Task> {
+    const quarterTime = await this.quarterTimeService.getWhere('id', inputs.quarter_time_id, false);
     const user = await this.userService.getWhere('id', inputs.user_id, [], false);
 
     const newTask = new Task();
@@ -24,6 +27,7 @@ export class TaskService {
     if (inputs.description) newTask.description = inputs.description;
     if (newTask.status) newTask.status = inputs.status;
     if (newTask.due_date) newTask.due_date = new Date(inputs.due_date);
+    newTask.quarter_time = quarterTime ? quarterTime : null;
     newTask.user = user ? user : null;
 
     return this.taskRepo
@@ -32,7 +36,7 @@ export class TaskService {
   }
 
   async get(taskId: string): Promise<Task> {
-    return this.getWhere('id', taskId,['user']);
+    return this.getWhere('id', taskId, ['user']);
   }
 
   async getAll(options: IPaginationOptions): Promise<Pagination<Task>> {
@@ -66,7 +70,7 @@ export class TaskService {
     relations = [],
     throwsException = true,
   ): Promise<Task | null> {
-    return this.taskRepo.findOne({ where: { [key]: value },relations }).then((task) => {
+    return this.taskRepo.findOne({ where: { [key]: value }, relations }).then((task) => {
       if (!task && throwsException) {
         return Promise.reject(
           new NotFoundException(`No task found with ${key} ${value}`),

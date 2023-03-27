@@ -51,6 +51,16 @@ export class CreateTaskDto {
     example: '1anewrfaw',
   })
   user_id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Quarter time id',
+    required: true,
+    example: '1anewrfaw',
+  })
+  quarter_time_id: string;
 }
 
 export class UpdateTaskDto extends PartialType(CreateTaskDto) {

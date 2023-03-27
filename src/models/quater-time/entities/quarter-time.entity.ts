@@ -1,9 +1,10 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn, ManyToOne, OneToMany,
 } from 'typeorm';
 import { EnumQuarterTimeStatus } from '../../../common/helpers';
+import { Task } from '../../task/entities/task.entity';
 
 @Entity('quarter_times')
 export class QuarterTime {
@@ -24,6 +25,10 @@ export class QuarterTime {
 
   @Column({ type: 'enum', enum: EnumQuarterTimeStatus, default: EnumQuarterTimeStatus.PENDING })
   status: EnumQuarterTimeStatus;
+
+  // add task column
+  @OneToMany(() => Task,task=>task.quarter_time)
+  tasks: Task[];
 
   // @ManyToMany(() => UserQuarterTime, { eager: true })
   // plannings: UserQuarterTime[];
