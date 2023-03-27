@@ -13,7 +13,7 @@ deploy-railway:
     RAILWAY_SERVICE_NAME: "api-core"
   script:
     - echo "Deploying application..."
-    - echo "Variables are '$RAILWAY_TOKEN' and '$RAILWAY_SERVICE_NAME'"
+    # - echo "Variables are '$RAILWAY_TOKEN' and '$RAILWAY_SERVICE_NAME'"
     - apt-get update && apt-get install -y curl
     - curl -fsSL https://railway.app/install.sh | sh
     - railway up --service=$RAILWAY_SERVICE_NAME -d
