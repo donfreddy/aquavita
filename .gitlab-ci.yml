@@ -8,6 +8,9 @@ deploy-railway:
     - pushes
     - dev
   environment: production
+  variables:
+    RAILWAY_TOKEN: "d09830df-94e9-4de9-ab12-0f9dc8f908c2"
+    RAILWAY_SERVICE_NAME: "api-core"
   script:
     - echo "Deploying application..."
     - echo "Variables are '$RAILWAY_TOKEN' and '$RAILWAY_SERVICE_NAME'"
