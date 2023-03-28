@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -82,8 +81,26 @@ export class UserService {
     return { ...user, planning: userPlanning };
   }
 
+  async getProfile(user: User): Promise<User> {
+    const foundUser = await this.getWhere('id', user.id, ['tasks']);
+
+    // get user planning
+    const userPlanning = await this.userQuarterTimeRepo.find({
+      where: { user: { id: foundUser.id } },
+      relations: ['quarter_time'],
+    });
+
+    return { ...user, planning: userPlanning };
+  }
+
   async update(userId: string, inputs: DeepPartial<User>) {
     const foundUser = await this.getWhere('id', userId);
+    await this.userRepo.update(foundUser.id, inputs);
+    return { updated: true };
+  }
+
+  async updateProfile(user: User, inputs: DeepPartial<User>) {
+    const foundUser = await this.getWhere('id', user.id);
     await this.userRepo.update(foundUser.id, inputs);
     return { updated: true };
   }

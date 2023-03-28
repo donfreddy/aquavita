@@ -1,3 +1,4 @@
+import { ProfileController } from './profile.controller';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { Module } from '@nestjs/common';
@@ -7,8 +8,7 @@ import { UserQuarterTime } from '../../common/entities/user-quarter-time.entity'
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, UserQuarterTime])],
-  controllers: [UserController],
+  controllers: [UserController, ProfileController],
   providers: [UserService],
 })
-export class UserModule {
-}
+export class UserModule {}
