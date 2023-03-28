@@ -1,8 +1,8 @@
 import { Request } from 'express';
 import { configService } from 'src/config/config.service';
 import { slugifyString } from './helper';
-import { BadRequestError } from './api-error';
 import { extname } from 'path';
+import { BadRequestException } from '@nestjs/common';
 
 /**
  * Filter for image and pdf files
@@ -16,11 +16,11 @@ import { extname } from 'path';
 export const imageAndPdfFileFilter = (
   _req: Request,
   file: Express.Multer.File,
-  callback: (error: BadRequestError | null, acceptFile: boolean) => void,
+  callback: (error: BadRequestException | null, acceptFile: boolean) => void,
 ): void => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|pdf)$/)) {
     return callback(
-      new BadRequestError(
+      new BadRequestException(
         'Only image and PDF files are allowed! (jpg, jpeg, png, pdf)',
       ),
       false,
@@ -41,7 +41,7 @@ export const imageAndPdfFileFilter = (
 export const editFileName = (
   _req: Request,
   file: Express.Multer.File,
-  callback: (error: BadRequestError | null, filename: string) => void,
+  callback: (error: BadRequestException | null, filename: string) => void,
 ): void => {
   const name = file.originalname.split('.')[0];
   const fileExtName = extname(file.originalname);

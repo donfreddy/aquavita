@@ -31,27 +31,7 @@ export function ApiResponse(
       ClassSerializerInterceptor,
       DefaultResponseInterceptor(message),
     ),
-    HttpCode(httpCode),
+    HttpCode(httpCode ?? HttpStatus.OK),
     UseFilters(HttpExceptionFilter),
   );
 }
-
-// /**
-//  * @description
-//  * This is paged response decorator.
-//  *
-//  * @docsCategory decorators
-//  */
-// export function PagedResponse(
-//   msg: IResponseMessage,
-//   httpCode?: HttpStatus,
-// ): IAuthApplyDecorator {
-//   return applyDecorators(
-//     UseInterceptors(
-//       ClassSerializerInterceptor,
-//       PagedResponseInterceptor(msg),
-//     ),
-//     HttpCode(httpCode),
-//     UseFilters(HttpExceptionFilter),
-//   );
-// }

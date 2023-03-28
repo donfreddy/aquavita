@@ -1,31 +1,12 @@
-import { BadRequestError } from './common/helpers/api-error';
-import { BadRequestResponse } from './common/helpers/api-response';
+import { Controller, Get, Header, HttpCode, HttpStatus, Post, Res, UploadedFile } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { createZipFile } from './common/helpers';
 import { PdfService } from './pdf/pdf.service';
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  Header,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Res,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
-import { createZipFile, SuccessResponse } from './common/helpers';
 import { SuccessResponseDto } from './common/dtos/response.dto';
 import { Response } from 'express';
-import LocalFilesInterceptor from './common/interceptors/local-files.interceptor';
 import { LocalFileService } from './models/local-file/local-file.service';
-import { ApiFile } from './common/decorators/api-file.decorator';
+import { ApiResponse } from './common/decorators/response.decorator';
+import { ApiFile } from './common/decorators';
 
 @ApiTags('health')
 @Controller()
@@ -33,33 +14,33 @@ export class AppController {
   constructor(
     private readonly pdf: PdfService,
     private readonly localFile: LocalFileService,
-  ) {}
+  ) {
+  }
 
   @Get()
+  @ApiResponse('Success')
   @ApiOkResponse({ type: SuccessResponseDto })
   @ApiOperation({ summary: 'Return test data' })
   getHello() {
-    const data = {
+    return  {
       project: 'Aquavita API',
       description: 'RestFul API specification for Aquavita',
       version: '1.0.0',
     };
-    return new SuccessResponse('Success', data);
   }
 
   @Post('image')
   @ApiFile()
+  @ApiResponse('Upload image successfully.')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Upload image.' })
   async getImage(@UploadedFile('file') image: Express.Multer.File) {
-    const result = await this.localFile.saveLocalFileData({
+    return await this.localFile.saveLocalFileData({
       path: image.path,
       filename: image.filename,
       destination: image.destination,
       mimetype: image.mimetype,
     });
-
-    return new SuccessResponse('Upload image successfully.', result);
   }
 
   @Get('/export')
@@ -74,7 +55,6 @@ export class AppController {
       //'Content-Length': zipFile.length,
     });
 
-    // new SuccessResponse(null, zipFile).send(res);
     res.send(zipFile);
   }
 
@@ -92,7 +72,6 @@ export class AppController {
       'Content-Length': pdfBuffer.length,
     });
 
-    //new SuccessResponse(null, pdfBuffer).send(res);
     res.send(pdfBuffer);
   }
 }

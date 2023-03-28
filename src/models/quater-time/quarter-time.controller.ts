@@ -29,7 +29,6 @@ export class QuarterTimeController {
   @ApiBody({ description: 'Create a new quarter time', type: CreateQuarterTime })
   async createQuarterTime(@Body() inputs: CreateQuarterTime): Promise<any> {
     return await this.quarterTime.create(inputs);
-    // return new SuccessResponse('Quarter time created successfully.', result);
   }
 
   @Get()
@@ -49,16 +48,14 @@ export class QuarterTimeController {
       route: route,
     };
     return await this.quarterTime.getAll(paginationOptions);
-    // return new SuccessResponse('Get All quarter time successfully.', result);
   }
 
   @Post(':id/planning')
-  @ApiResponse()
+  @ApiResponse('Success')
   @ApiParam({ name: 'id', description: 'The Quarter time id' })
   @ApiOperation({ summary: 'Create a new quarter time planning.' })
   @ApiBody({ description: 'Create a new quarter time planning', type: CreateQuarterTimePlannings })
-  async createQuarterTimePlanning( @Param('id') id: string, @Body() inputs: CreateQuarterTimePlannings): Promise<any> {
-  return  await this.quarterTime.planQuarterTimeForUser(id, inputs);
-    // return new SuccessResponse('Quarter time created successfully.', result);
+  async createQuarterTimePlanning(@Param('id') id: string, @Body() inputs: CreateQuarterTimePlannings): Promise<any> {
+    return await this.quarterTime.planQuarterTimeForUser(id, inputs);
   }
 }

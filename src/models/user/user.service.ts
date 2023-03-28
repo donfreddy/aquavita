@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   IPaginationOptions,
@@ -8,8 +14,6 @@ import {
 import { UserQuarterTime } from 'src/common/entities/user-quarter-time.entity';
 import {
   hashPassword,
-  ConflictError,
-  InternalErrorResponse,
 } from 'src/common/helpers';
 import { generatePassword } from 'src/common/helpers/generate-password';
 import { DeepPartial, Repository } from 'typeorm';
@@ -28,6 +32,12 @@ export class UserService {
   }
 
   async create(inputs: CreateUserDto, hasPassword = true): Promise<any> {
+    //check if the user is an employee
+    const foundUser = await this.getWhere('email', inputs.email, [], false);
+    if (foundUser) {
+      throw new BadRequestException('User already exists with this email.');
+    }
+
     const userPassword = hasPassword ? inputs.password : generatePassword();
     const hashedPassword = await hashPassword(userPassword);
 
@@ -47,16 +57,12 @@ export class UserService {
       newUser.job = inputs.job;
       newUser.hiring_date = new Date(inputs.hiring_date);
 
-      return this.userRepo
+      return await this.userRepo
         .save(newUser)
         .then((entity) => this.getWhere('id', (entity as User).id))
         .catch((error) => Promise.reject(error));
     } catch (error) {
-      if (error?.code === 'ER_DUP_ENTRY') {
-        return new ConflictError('Email already exists');
-      } else {
-        return new InternalErrorResponse();
-      }
+      throw new InternalServerErrorException();
     }
   }
 

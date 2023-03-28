@@ -3,10 +3,9 @@ import { Repository } from 'typeorm';
 import { CreateQuarterTime, CreateQuarterTimePlannings } from './dto/quarter-time.dto';
 import { QuarterTime } from './entities/quarter-time.entity';
 import { User } from '../user/entities/user.entity';
-import { NotFoundException } from '@nestjs/common';
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { UserQuarterTime } from '../../common/entities/user-quarter-time.entity';
 import { UserService } from '../user/user.service';
-import { InternalErrorResponse } from '../../common/helpers';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 export class QuarterTimeService {
@@ -55,7 +54,7 @@ export class QuarterTimeService {
       }
       return { created: true };
     } catch (e) {
-      throw new InternalErrorResponse('Error while planning quarter time for user');
+      throw new InternalServerErrorException('Error while planning quarter time for user');
     }
   }
 
