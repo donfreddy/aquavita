@@ -39,7 +39,6 @@ export class TaskController {
   }
 
   @Get()
-  @ApiResponse()
   @ApiResponse('Get all tasks successfully.')
   @ApiOperation({ summary: 'Get all tasks.' })
   async getAllTasks(): Promise<any> {
