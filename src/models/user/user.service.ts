@@ -10,7 +10,7 @@ import {
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
-import { UserQuarterTime } from 'src/common/entities/user-quarter-time.entity';
+import { UserQuarterPlanning } from 'src/common/entities/user-quarter-planning.entity';
 import {
   hashPassword,
 } from 'src/common/helpers';
@@ -25,8 +25,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-    @InjectRepository(UserQuarterTime)
-    private readonly userQuarterTimeRepo: Repository<UserQuarterTime>,
+    @InjectRepository(UserQuarterPlanning)
+    private readonly userQuarterTimeRepo: Repository<UserQuarterPlanning>,
   ) {
   }
 
@@ -50,7 +50,6 @@ export class UserService {
       newUser.email = inputs.email;
       newUser.password = hashedPassword;
       newUser.phone = inputs.phone;
-      newUser.roles = roles;
       newUser.city = inputs.city;
       newUser.neighborhood = inputs.neighborhood;
       newUser.job = inputs.job;
@@ -65,32 +64,16 @@ export class UserService {
     }
   }
 
-  async getAll(options: IPaginationOptions): Promise<Pagination<User>> {
-    return paginate<User>(this.userRepo, options);
+  async getAll(): Promise<User[]> {
+    return this.userRepo.find();
   }
 
   async get(userId: string): Promise<User> {
-    const user = await this.getWhere('id', userId, ['tasks']);
-
-    // get user planning
-    const userPlanning = await this.userQuarterTimeRepo.find({
-      where: { user: { id: user.id } },
-      relations: ['quarter_time'],
-    });
-
-    return { ...user, planning: userPlanning };
+    return this.getWhere('id', userId, [ 'planning']);
   }
 
   async getProfile(user: User): Promise<User> {
-    const foundUser = await this.getWhere('id', user.id, ['tasks']);
-
-    // get user planning
-    const userPlanning = await this.userQuarterTimeRepo.find({
-      where: { user: { id: foundUser.id } },
-      relations: ['quarter_time'],
-    });
-
-    return { ...user, planning: userPlanning };
+    return this.getWhere('id', user.id, ['planning']);
   }
 
   async update(userId: string, inputs: DeepPartial<User>) {

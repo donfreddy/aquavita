@@ -3,44 +3,50 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { Task } from './entities/task.entity';
-import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { UserService } from '../user/user.service';
-import { QuarterTimeService } from '../quater-time/quarter-time.service';
+import { QuarterPlanning } from '../../common/entities/quarter-planning.entity';
+import { UserQuarterPlanning } from '../../common/entities/user-quarter-planning.entity';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepo: Repository<Task>,
-    private readonly userService: UserService,
-    private readonly quarterTimeService: QuarterTimeService,
+    @InjectRepository(UserQuarterPlanning)
+    private readonly userQuarterTimeRepo: Repository<UserQuarterPlanning>,
+    @InjectRepository(QuarterPlanning)
+    private readonly quarterPlanningRepo: Repository<QuarterPlanning>,
+    private readonly : UserService,
   ) {
   }
 
   // Create a new task
   async create(inputs: CreateTaskDto): Promise<Task> {
-    const quarterTime = await this.quarterTimeService.getWhere('id', inputs.quarter_time_id, false);
-    const user = await this.userService.getWhere('id', inputs.user_id, [], false);
+    const quarterPlanning = await this.quarterPlanningRepo.findOneBy({
+      id: inputs.quarter_time_id
+    });
+    const userPlaning = await this.userQuarterTimeRepo.findOneBy({
+      id: inputs.user_id
+    });
 
     const newTask = new Task();
     newTask.title = inputs.title;
     if (inputs.description) newTask.description = inputs.description;
-    if (newTask.status) newTask.status = inputs.status;
-    if (newTask.due_date) newTask.due_date = new Date(inputs.due_date);
-    newTask.quarter_time = quarterTime ? quarterTime : null;
-    newTask.user = user ? user : null;
+    newTask.due_date = newTask.due_date ?  new Date(inputs.due_date) : new Date();
+    newTask.quarter_planning = quarterPlanning;
+    newTask.user_planning = userPlaning;
 
     return this.taskRepo
-      .save(inputs)
+      .save(newTask)
       .then((entity) => this.getWhere('id', (entity as Task).id));
   }
 
   async get(taskId: string): Promise<Task> {
-    return this.getWhere('id', taskId, ['user']);
+    return this.getWhere('id', taskId, ['user_planning.user', 'quarter_planning.quarter']);
   }
 
-  async getAll(options: IPaginationOptions): Promise<Pagination<Task>> {
-    return paginate<Task>(this.taskRepo, options);
+  async getAll(): Promise<Task[]> {
+    return this.taskRepo.find({ relations: ['user_planning.user', 'quarter_planning.quarter'] });
   }
 
   async update(taskId: string, inputs: DeepPartial<CreateTaskDto>) {
@@ -51,7 +57,10 @@ export class TaskService {
     if (inputs.due_date) foundTask.due_date = new Date(inputs.due_date);
     if (inputs.status) foundTask.status = inputs.status;
     if (inputs.user_id) {
-      foundTask.user = await this.userService.getWhere('id', inputs.user_id);
+      const userPlaning = await this.userQuarterTimeRepo.findOneBy({
+        id: inputs.user_id
+      });
+      foundTask.user_planning = userPlaning;
     }
 
     await this.taskRepo.save(foundTask);

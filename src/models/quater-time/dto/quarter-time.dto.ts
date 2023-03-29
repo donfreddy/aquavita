@@ -74,3 +74,26 @@ export class CreateQuarterTimePlannings {
 export class UpdateQuarterTimePlannings extends PartialType(CreateQuarterTimePlannings) {
 
 }
+
+export class UpdateQuarterPlanning {
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Start quarter-time date',
+    required: true,
+    example: '2021-01-01',
+  })
+  start_date: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'End quarter-time date',
+    required: true,
+    example: '2021-01-01',
+  })
+  end_date: string;
+}
+

@@ -11,7 +11,7 @@ export class RolesGuard extends JwtAuthGuard {
   }
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>('roles', [
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>('job', [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -19,6 +19,6 @@ export class RolesGuard extends JwtAuthGuard {
       return true;
     }
     const { user } = context.switchToHttp().getRequest<RequestWithUser>();
-    return requiredRoles.some((role) => user?.roles?.includes(role));
+    return requiredRoles.some((role) => user?.job === role);
   }
 }

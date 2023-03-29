@@ -42,19 +42,8 @@ export class TaskController {
   @ApiResponse()
   @ApiResponse('Get all tasks successfully.')
   @ApiOperation({ summary: 'Get all tasks.' })
-  async getAllTasks(
-    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
-      page: number,
-    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
-      limit: number,
-  ): Promise<any> {
-    const route = `${configService.getApiBaseUrl()}/tasks`;
-    const paginationOptions = {
-      page: page,
-      limit: getPaginationLimit(limit),
-      route: route,
-    };
-    return await this.task.getAll(paginationOptions);
+  async getAllTasks(): Promise<any> {
+    return await this.task.getAll();
   }
 
   @Get(':id')

@@ -4,10 +4,10 @@ import { UserService } from './user.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { UserQuarterTime } from '../../common/entities/user-quarter-time.entity';
+import { UserQuarterPlanning } from '../../common/entities/user-quarter-planning.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserQuarterTime])],
+  imports: [TypeOrmModule.forFeature([User, UserQuarterPlanning])],
   controllers: [UserController, ProfileController],
   providers: [UserService],
 })

@@ -1,10 +1,13 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn, ManyToOne, OneToMany,
+  PrimaryGeneratedColumn, OneToMany, DeleteDateColumn, ManyToMany,
 } from 'typeorm';
 import { EnumQuarterTimeStatus } from '../../../common/helpers';
 import { Task } from '../../task/entities/task.entity';
+import { Exclude } from 'class-transformer';
+import { UserQuarterPlanning } from '../../../common/entities/user-quarter-planning.entity';
+import { QuarterPlanning } from '../../../common/entities/quarter-planning.entity';
 
 @Entity('quarter_times')
 export class QuarterTime {
@@ -17,19 +20,22 @@ export class QuarterTime {
   @Column({ nullable: true })
   description: string;
 
-  @Column()
+  @Column({ nullable: true })
   start_time: string;
 
-  @Column()
+  @Column({ nullable: true })
   end_time: string;
 
-  @Column({ type: 'enum', enum: EnumQuarterTimeStatus, default: EnumQuarterTimeStatus.PENDING })
+  @Column({ type: 'enum', enum: EnumQuarterTimeStatus, default: EnumQuarterTimeStatus.FREE })
   status: EnumQuarterTimeStatus;
 
-  // add task column
-  @OneToMany(() => Task,task=>task.quarter_time)
-  tasks: Task[];
 
-  // @ManyToMany(() => UserQuarterTime, { eager: true })
-  // plannings: UserQuarterTime[];
+  @OneToMany(() => QuarterPlanning, planning => planning.quarter, {
+    onDelete: 'CASCADE'
+  })
+  plannings: QuarterPlanning[];
+
+  @Exclude()
+  @DeleteDateColumn({ type: 'timestamp' })
+  deleted_at: Date;
 }

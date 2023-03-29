@@ -1,3 +1,5 @@
+import { DepartmentModule } from './models/department/department.module';
+import { StockModule } from './models/stock/stock.module';
 import { PlanningModule } from './models/planning/planning.module';
 import { TaskModule } from './models/task/task.module';
 import {
@@ -20,9 +22,13 @@ import { PdfModule } from './pdf/pdf.module';
 import { MailModule } from './mail/mail.module';
 import { LocalFileModule } from './models/local-file/local-file.module';
 import { QuarterTimeModule } from './models/quater-time/quarter-time.module';
+import { BreakdownModule } from './models/breakdown/breakdown.module';
 
 @Module({
   imports: [
+    DepartmentModule,
+    StockModule,
+     BreakdownModule,
     PlanningModule,
     TaskModule,
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),

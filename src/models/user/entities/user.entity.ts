@@ -1,10 +1,12 @@
-import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../role/role.enum';
 import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
 import { EnumGender } from '../../../common/helpers';
 import { Task } from 'src/models/task/entities/task.entity';
-import { UserQuarterTime } from '../../../common/entities/user-quarter-time.entity';
+import { UserQuarterPlanning } from '../../../common/entities/user-quarter-planning.entity';
+import { Department } from 'src/models/department/entities/department.entity';
+import { QuarterPlanning } from '../../../common/entities/quarter-planning.entity';
 
 @Entity('users')
 export class User extends AquavitaEntity {
@@ -47,16 +49,17 @@ export class User extends AquavitaEntity {
   @Column({ default: false })
   has_change_pwd: boolean;
 
+  @ManyToOne(() => Department, (department) => department.users)
+  @JoinColumn()
+  department: Department;
+
   @Exclude()
   @Column({ default: 'user' })
   owner: string;
 
-  @Column({ type: 'simple-array' })
-  roles: Role[];
-
-  @OneToMany(() => Task, (task) => task.user)
-  tasks: Task[];
-
-  @Column({ type: 'simple-array', nullable: true })
-  planning: UserQuarterTime[];
+  @OneToMany(() => UserQuarterPlanning, (quarter) => quarter.user, {
+    onDelete: 'CASCADE'
+  })
+  @JoinColumn()
+  planning: UserQuarterPlanning[];
 }

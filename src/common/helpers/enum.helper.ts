@@ -22,13 +22,20 @@ export enum EnumOtpRaison {
   RESET_PASSWORD = 'Reset Password',
 }
 
+export enum EnumQuarterPlanningStatus {
+  IN_PROGRESS = 'En cours',
+  PENDING = 'En standby',
+  DONE = 'Cloturer',
+}
+
 export enum EnumQuarterTimeStatus {
-  IN_PROGRESS = 'In Progress',
-  PENDING = 'Pending',
+  IN_PROGRESS = 'En cours',
+  PENDING = 'En standby',
+  FREE = 'Libre',
 }
 
 export enum EnumTaskStatus {
-  IN_PROGRESS = 'In Progress',
-  TO_DO = 'To Do',
-  DONE = 'Done',
+  IN_PROGRESS = 'En cours',
+  TO_DO = 'A faire',
+  DONE = 'Terminer',
 }

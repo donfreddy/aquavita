@@ -1,23 +1,17 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiBody, ApiBearerAuth, ApiTags, ApiParam } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { SwaggerApiPagedResponse, SwaggerApiResponse } from 'src/common/decorators/swagger-api.decorator';
-import { getPaginationLimit } from 'src/common/helpers';
+import { SwaggerApiResponse } from 'src/common/decorators/swagger-api.decorator';
 import { ApiResponse } from 'src/common/decorators/response.decorator';
-import { configService } from 'src/config/config.service';
-import { DEFAULT_PAGE, DEFAULT_LIMIT } from 'src/common/constants';
 import { UpdateUserDto } from './dto/user.dto';
 import { CreateUserDto } from 'src/models/user/dto/user.dto';
 import { UserService } from 'src/models/user/user.service';
@@ -39,22 +33,10 @@ export class UserController {
   }
 
   @Get()
-  @SwaggerApiPagedResponse()
   @ApiResponse('Get all users successfully.')
   @ApiOperation({ summary: 'Get all users.' })
-  async getAllUsers(
-    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
-      page: number,
-    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
-      limit: number,
-  ): Promise<any> {
-    const route = `${configService.getApiBaseUrl()}/users`;
-    const paginationOptions = {
-      page: page,
-      limit: getPaginationLimit(limit),
-      route: route,
-    };
-    return await this.user.getAll(paginationOptions);
+  async getAllUsers(): Promise<any> {
+    return await this.user.getAll();
   }
 
   @Get(':id')
@@ -62,7 +44,6 @@ export class UserController {
   @ApiParam({ name: 'id', description: 'The user id' })
   async getUserById(@Param('id') id: string): Promise<any> {
     return await this.user.get(id);
-    // return new SuccessResponse('Get user by id successfully.', result);
   }
 
   @Put(':id')
@@ -74,7 +55,6 @@ export class UserController {
     @Body() inputs: UpdateUserDto,
   ): Promise<any> {
     return await this.user.update(id, inputs);
-    // return new SuccessResponse('User updated succ       essfully.', result);
   }
 
   @Delete(':id')

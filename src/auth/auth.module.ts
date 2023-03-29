@@ -13,11 +13,12 @@ import { configService } from '../config/config.service';
 import { JwtModule } from '@nestjs/jwt';
 import { QuarterTimeService } from '../models/quater-time/quarter-time.service';
 import { QuarterTime } from '../models/quater-time/entities/quarter-time.entity';
-import { UserQuarterTime } from '../common/entities/user-quarter-time.entity';
+import { UserQuarterPlanning } from '../common/entities/user-quarter-planning.entity';
+import { QuarterPlanning } from '../common/entities/quarter-planning.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Otp,QuarterTime,UserQuarterTime,User]),
+    TypeOrmModule.forFeature([User, Otp,QuarterTime,UserQuarterPlanning,User,QuarterPlanning]),
     PassportModule,
     JwtModule.register({
       secret: configService.getJWT().secretKey,
