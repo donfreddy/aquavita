@@ -1,22 +1,16 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { SwaggerApiPagedResponse, SwaggerApiResponse } from '../../common/decorators/swagger-api.decorator';
 import { ApiResponse } from '../../common/decorators/response.decorator';
-import { DEFAULT_LIMIT, DEFAULT_PAGE } from '../../common/constants';
-import { configService } from '../../config/config.service';
-import { getPaginationLimit } from '../../common/helpers';
 import { TaskService } from './task.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateTaskDto, UpdateTaskDto } from './dto/task.dto';
@@ -50,10 +44,7 @@ export class TaskController {
   @ApiParam({ name: 'id', description: 'The task id' })
   @ApiOperation({ summary: 'Get task by id.' })
   async getTaskById(@Param('id') id: string): Promise<any> {
-
-    //
     return await this.task.get(id);
-    // return new SuccessResponse('Get task by id successfully.', result);
   }
 
   @Put(':id')
@@ -67,7 +58,6 @@ export class TaskController {
     @Body() inputs: UpdateTaskDto,
   ): Promise<any> {
     return await this.task.update(id, inputs);
-    //  return new SuccessResponse('User updated successfully.', result);
   }
 
   @Delete(':id')
@@ -76,6 +66,5 @@ export class TaskController {
   @ApiParam({ name: 'id', description: 'The task id' })
   async deleteTask(@Param('id') id: string): Promise<any> {
     return await this.task.remove(id);
-    // return new SuccessResponse('Task deleted successfully.', result);
   }
 }

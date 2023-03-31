@@ -28,6 +28,18 @@ export enum EnumQuarterPlanningStatus {
   DONE = 'Cloturer',
 }
 
+export enum EnumBreakdownStatus {
+  DECLARED = 'Declaré',
+  IN_PROGRESS = 'En cours',
+  FIXED = 'Reparé',
+}
+
+export enum EnumBreakdownPriority {
+  LOW = 'Low',
+  MEDIUM = 'Medium',
+  HIGH = 'High',
+}
+
 export enum EnumQuarterTimeStatus {
   IN_PROGRESS = 'En cours',
   PENDING = 'En standby',

@@ -21,9 +21,14 @@ export function setupSwagger(app: INestApplication): void {
       .addTag('health', 'API health check: Pinging the server')
       .addTag('auth', 'Authentication to DB')
       .addTag('users', 'Users management')
-      .addTag('quarter-times', 'Quarter time management')
+      .addTag('profile', 'User\'s profile management')
+      .addTag('quarter times', 'Quarter time management')
       .addTag('tasks', 'Tasks management')
       .addTag('planning', 'Planning management')
+      .addTag('breakdowns', 'Breakdowns management')
+      .addTag('purchase orders', 'Purchase order management')
+      .addTag('stocks', 'Stocks management')
+      // .addTag('planning', 'Planning management')
       .addBearerAuth()
       .build(),
   );

@@ -23,11 +23,13 @@ import { MailModule } from './mail/mail.module';
 import { LocalFileModule } from './models/local-file/local-file.module';
 import { QuarterTimeModule } from './models/quater-time/quarter-time.module';
 import { BreakdownModule } from './models/breakdown/breakdown.module';
+import { PurchaseOrderModule } from './models/purchase-order/purchase-order.module';
 
 @Module({
   imports: [
     DepartmentModule,
     StockModule,
+    PurchaseOrderModule,
      BreakdownModule,
     PlanningModule,
     TaskModule,

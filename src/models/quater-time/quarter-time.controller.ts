@@ -2,7 +2,7 @@ import {
   Body,
   Controller, DefaultValuePipe,
   Delete,
-  Get, Param,
+  Get, HttpStatus, Param,
   Post, Put, Query,
   UseGuards,
 } from '@nestjs/common';
@@ -21,14 +21,14 @@ import { ApiResponse } from '../../common/decorators/response.decorator';
 @ApiBearerAuth()
 @SwaggerApiResponse()
 @UseGuards(JwtAuthGuard)
-@ApiTags('quarter-times')
+@ApiTags('quarter times')
 @Controller('quarter-times')
 export class QuarterTimeController {
   constructor(private readonly quarterTime: QuarterTimeService) {
   }
 
   @Post()
-  @ApiResponse()
+  @ApiResponse('', HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new quarter time.' })
   @ApiBody({ description: 'Create a new quarter time', type: CreateQuarterTime })
   async createQuarterTime(@Body() inputs: CreateQuarterTime): Promise<any> {
@@ -43,7 +43,7 @@ export class QuarterTimeController {
     return await this.quarterTime.getAll();
   }
 
-  @Get("unplanned")
+  @Get('unplanned')
   @ApiResponse()
   @SwaggerApiPagedResponse()
   @ApiOperation({ summary: 'Get all unplanned quarter time.' })

@@ -29,7 +29,7 @@ export class UserController {
   @ApiOperation({ summary: 'Create a new user.' })
   @ApiBody({ description: 'Create a new user', type: CreateUserDto })
   async createUser(@Body() inputs: CreateUserDto): Promise<any> {
-    return this.user.create(inputs);
+    return this.user.create(inputs, false);
   }
 
   @Get()

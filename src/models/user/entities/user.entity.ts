@@ -7,6 +7,7 @@ import { Task } from 'src/models/task/entities/task.entity';
 import { UserQuarterPlanning } from '../../../common/entities/user-quarter-planning.entity';
 import { Department } from 'src/models/department/entities/department.entity';
 import { QuarterPlanning } from '../../../common/entities/quarter-planning.entity';
+import { Breakdown } from '../../breakdown/entities/breakdown.entity';
 
 @Entity('users')
 export class User extends AquavitaEntity {
@@ -57,8 +58,12 @@ export class User extends AquavitaEntity {
   @Column({ default: 'user' })
   owner: string;
 
+  @OneToMany(() => Breakdown, (breakdown) => breakdown.assign_to)
+  @JoinColumn()
+  breakdowns: Breakdown[];
+
   @OneToMany(() => UserQuarterPlanning, (quarter) => quarter.user, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   planning: UserQuarterPlanning[];

@@ -37,7 +37,12 @@ export class UserService {
       throw new BadRequestException('User already exists with this email.');
     }
 
+    console.log(inputs);
+    console.log(hasPassword);
+
     const userPassword = hasPassword ? inputs.password : generatePassword();
+    console.log(userPassword);
+    console.log(generatePassword());
     const hashedPassword = await hashPassword(userPassword);
 
     // set user role

@@ -1,7 +1,8 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { EnumBreakdownStatus } from '../../../common/helpers';
 
-export class CreatBreakdown {
+export class CreateBreakdown {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
@@ -40,6 +41,64 @@ export class CreatBreakdown {
   type: string;
 }
 
-export class UpdateBreakdown extends PartialType(CreatBreakdown) {
+export class UpdateBreakdown {
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Breakdown name',
+    required: false,
+    example: 'Panne moteur',
+  })
+  name: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Breakdown description',
+    required: false,
+    example: 'Some description',
+  })
+  description: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Breakdown tracking time',
+    required: false,
+    example: '',
+  })
+  tracking_time: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'breakdown type',
+    required: false,
+    example: 'Roulement',
+  })
+  type: string;
+
+  @IsEnum(EnumBreakdownStatus)
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'breakdown status',
+    required: false,
+    example: EnumBreakdownStatus.DECLARED,
+  })
+  status: EnumBreakdownStatus;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: '',
+    required: false,
+    example: '2314hl12hh42j3hl432',
+  })
+  user_id: string;
 }

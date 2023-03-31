@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import {  SwaggerApiResponse } from '../../common/decorators/swagger-api.decorator';
+import { SwaggerApiResponse } from '../../common/decorators/swagger-api.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { ApiResponse } from '../../common/decorators/response.decorator';
 import { BreakdownService } from './breakdown.service';
-import { CreatBreakdown, UpdateBreakdown } from './dto/breakdown.dto';
+import { CreateBreakdown, UpdateBreakdown } from './dto/breakdown.dto';
 
 @ApiBearerAuth()
 @SwaggerApiResponse()
@@ -16,10 +16,10 @@ export class BreakdownController {
   }
 
   @Post()
-  @ApiResponse()
+  @ApiResponse('', HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new breakdown.' })
-  @ApiBody({ description: 'Create a new breakdown', type: CreatBreakdown })
-  async createBreakdown(@Body() inputs: CreatBreakdown): Promise<any> {
+  @ApiBody({ description: 'Create a new breakdown', type: CreateBreakdown })
+  async createBreakdown(@Body() inputs: CreateBreakdown): Promise<any> {
     return await this.breakdown.create(inputs);
   }
 
@@ -30,9 +30,16 @@ export class BreakdownController {
     return await this.breakdown.getAll();
   }
 
+  @Get('/types')
+  @ApiResponse()
+  @ApiOperation({ summary: 'Get all breakdown types.' })
+  async getAllBreakdownType(): Promise<any> {
+    return await this.breakdown.getType();
+  }
+
   @Put(':id')
   @ApiResponse()
-  @ApiParam({ name: 'id', description: 'The stock id' })
+  @ApiParam({ name: 'id', description: 'The breakdown id' })
   @ApiOperation({ summary: 'Update stock.' })
   @ApiBody({ description: 'Update stock', type: UpdateBreakdown })
   async updateBreakdown(
