@@ -38,6 +38,16 @@ export class CreatePurchaseOrder {
     example: '2023-10-03',
   })
   issue_day: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Filename',
+    required: false,
+    example: '0-module-zhw.jpg',
+  })
+  filename: string;
 }
 
 export class UpdatePurchaseOrder extends PartialType(CreatePurchaseOrder) {

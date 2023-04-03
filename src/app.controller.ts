@@ -1,4 +1,14 @@
-import { Controller, Get, Header, HttpCode, HttpStatus, Post, Res, UploadedFile } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Header,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+  UploadedFile,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { createZipFile } from './common/helpers';
 import { PdfService } from './pdf/pdf.service';
@@ -14,15 +24,14 @@ export class AppController {
   constructor(
     private readonly pdf: PdfService,
     private readonly localFile: LocalFileService,
-  ) {
-  }
+  ) {}
 
   @Get()
   @ApiResponse('Success')
   @ApiOkResponse({ type: SuccessResponseDto })
   @ApiOperation({ summary: 'Return test data' })
   getHello() {
-    return  {
+    return {
       project: 'Aquavita API',
       description: 'RestFul API specification for Aquavita',
       version: '1.0.0',
@@ -35,6 +44,9 @@ export class AppController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Upload image.' })
   async getImage(@UploadedFile('file') image: Express.Multer.File) {
+    if (!image) {
+      throw new BadRequestException('File is required.');
+    }
     return await this.localFile.saveLocalFileData({
       path: image.path,
       filename: image.filename,

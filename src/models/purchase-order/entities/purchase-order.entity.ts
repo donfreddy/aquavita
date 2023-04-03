@@ -15,6 +15,9 @@ export class PurchaseOrder extends AquavitaEntity {
   @Column()
   issue_day: Date;
 
+  @Column({ nullable: true })
+  file: string;
+
   //
   // @Column({
   //   type: 'enum',

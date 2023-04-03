@@ -1,18 +1,34 @@
+import { LocalFileService } from './../local-file/local-file.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { PurchaseOrder } from './entities/purchase-order.entity';
 import { CreatePurchaseOrder } from './dto/purchase-order.dto';
+import { getImageUrl } from '../../common/helpers';
 
 @Injectable()
 export class PurchaseOrderService {
   constructor(
     @InjectRepository(PurchaseOrder)
     private readonly purchaseOrderRepo: Repository<PurchaseOrder>,
+    private readonly localFile: LocalFileService,
   ) {
   }
 
   async create(inputs: CreatePurchaseOrder) {
+    // get fileId from user input
+    const newPurchaseOrder = new PurchaseOrder();
+    newPurchaseOrder.name = inputs.name;
+    newPurchaseOrder.po_number = inputs.po_number;
+    newPurchaseOrder.amount = inputs.amount;
+    newPurchaseOrder.issue_day = new Date(inputs.issue_day);
+    if (inputs.filename) {
+      const file = await this.localFile.getFileByName(inputs.filename);
+      if (file) {
+        newPurchaseOrder.file = getImageUrl(file.filename);
+      }
+    }
+
     return this.purchaseOrderRepo
       .save(inputs)
       .then((entity) => this.getWhere('id', (entity as PurchaseOrder).id))
