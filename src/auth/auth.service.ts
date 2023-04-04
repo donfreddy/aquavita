@@ -32,7 +32,6 @@ export class AuthService {
   }
 
   async login(inputs: LoginDto): Promise<any> {
-    console.log('This is the message');
     const { email, password } = inputs;
     const foundUser = await this.user.getWhere('email', email);
 

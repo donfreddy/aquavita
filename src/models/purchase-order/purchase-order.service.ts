@@ -1,9 +1,9 @@
-import { LocalFileService } from './../local-file/local-file.service';
+import { LocalFileService } from '../local-file/local-file.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { PurchaseOrder } from './entities/purchase-order.entity';
-import { CreatePurchaseOrder } from './dto/purchase-order.dto';
+import { CreatePurchaseOrder, UpdatePurchaseOrder } from './dto/purchase-order.dto';
 import { getImageUrl } from '../../common/helpers';
 
 @Injectable()
@@ -16,7 +16,6 @@ export class PurchaseOrderService {
   }
 
   async create(inputs: CreatePurchaseOrder) {
-    // get fileId from user input
     const newPurchaseOrder = new PurchaseOrder();
     newPurchaseOrder.name = inputs.name;
     newPurchaseOrder.po_number = inputs.po_number;
@@ -30,7 +29,7 @@ export class PurchaseOrderService {
     }
 
     return this.purchaseOrderRepo
-      .save(inputs)
+      .save(newPurchaseOrder)
       .then((entity) => this.getWhere('id', (entity as PurchaseOrder).id))
       .catch((error) => Promise.reject(error));
   }
@@ -39,9 +38,20 @@ export class PurchaseOrderService {
     return this.purchaseOrderRepo.find();
   }
 
-  async update(purchaseOrderId: string, inputs: DeepPartial<PurchaseOrder>) {
+  async update(purchaseOrderId: string, inputs: UpdatePurchaseOrder) {
     const foundPurchaseOrder = await this.getWhere('id', purchaseOrderId);
-    await this.purchaseOrderRepo.update(foundPurchaseOrder.id, inputs);
+    if (inputs.name) foundPurchaseOrder.name = inputs.name;
+    if (inputs.po_number) foundPurchaseOrder.po_number = inputs.po_number;
+    if (inputs.amount) foundPurchaseOrder.amount = inputs.amount;
+    if (inputs.issue_day) foundPurchaseOrder.issue_day = new Date(inputs.issue_day);
+    if (inputs.filename) {
+      const file = await this.localFile.getFileByName(inputs.filename);
+      if (file) {
+        foundPurchaseOrder.file = getImageUrl(file.filename);
+      }
+    }
+
+    await this.purchaseOrderRepo.save(foundPurchaseOrder);
     return { updated: true };
   }
 
