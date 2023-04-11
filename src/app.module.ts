@@ -1,3 +1,6 @@
+import { CarboyModule } from './models/carboy/carboy.module';
+import { PurchaseModule } from './models/purchase/purchase.module';
+import { FountainModule } from './models/fountain/fountain.module';
 import { DepartmentModule } from './models/department/department.module';
 import { StockModule } from './models/stock/stock.module';
 import { PlanningModule } from './models/planning/planning.module';
@@ -27,10 +30,13 @@ import { PurchaseOrderModule } from './models/purchase-order/purchase-order.modu
 
 @Module({
   imports: [
+    CarboyModule,
+    PurchaseModule,
+    FountainModule,
     DepartmentModule,
     StockModule,
     PurchaseOrderModule,
-     BreakdownModule,
+    BreakdownModule,
     PlanningModule,
     TaskModule,
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),

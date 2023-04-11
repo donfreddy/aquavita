@@ -5,6 +5,7 @@ import {
   Header,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Res,
   UploadedFile,
@@ -47,12 +48,28 @@ export class AppController {
     if (!image) {
       throw new BadRequestException('File is required.');
     }
-    return await this.localFile.saveLocalFileData({
+    const { filename } = await this.localFile.saveLocalFileData({
       path: image.path,
       filename: image.filename,
       destination: image.destination,
       mimetype: image.mimetype,
     });
+
+    return filename;
+  }
+
+  @Get('images/:fileName')
+  async uploadImage(
+    @Param('fileName') fileName: string,
+    @Res() response: Response,
+  ) {
+    const file = await this.localFile.getFileByName(fileName);
+    response
+      .set({
+        'Content-Disposition': `inline; filename="${file.filename}"`,
+        'Content-Type': file.mimetype,
+      })
+      .sendFile(fileName, { root: file.destination });
   }
 
   @Get('/export')

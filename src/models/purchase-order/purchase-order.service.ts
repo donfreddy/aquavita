@@ -3,7 +3,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PurchaseOrder } from './entities/purchase-order.entity';
-import { CreatePurchaseOrder, UpdatePurchaseOrder } from './dto/purchase-order.dto';
+import {
+  CreatePurchaseOrder,
+  UpdatePurchaseOrder,
+} from './dto/purchase-order.dto';
 import { getImageUrl } from '../../common/helpers';
 
 @Injectable()
@@ -16,6 +19,8 @@ export class PurchaseOrderService {
   }
 
   async create(inputs: CreatePurchaseOrder) {
+    console.log(inputs.issue_day);
+    console.log(new Date(inputs.issue_day));
     const newPurchaseOrder = new PurchaseOrder();
     newPurchaseOrder.name = inputs.name;
     newPurchaseOrder.po_number = inputs.po_number;
@@ -24,7 +29,7 @@ export class PurchaseOrderService {
     if (inputs.filename) {
       const file = await this.localFile.getFileByName(inputs.filename);
       if (file) {
-        newPurchaseOrder.file = getImageUrl(file.filename);
+        newPurchaseOrder.file = `images/${file.filename}`;
       }
     }
 
@@ -43,11 +48,12 @@ export class PurchaseOrderService {
     if (inputs.name) foundPurchaseOrder.name = inputs.name;
     if (inputs.po_number) foundPurchaseOrder.po_number = inputs.po_number;
     if (inputs.amount) foundPurchaseOrder.amount = inputs.amount;
-    if (inputs.issue_day) foundPurchaseOrder.issue_day = new Date(inputs.issue_day);
+    if (inputs.issue_day)
+      foundPurchaseOrder.issue_day = new Date(inputs.issue_day);
     if (inputs.filename) {
       const file = await this.localFile.getFileByName(inputs.filename);
       if (file) {
-        foundPurchaseOrder.file = getImageUrl(file.filename);
+        foundPurchaseOrder.file = `images/${file.filename}`;
       }
     }
 
@@ -66,13 +72,17 @@ export class PurchaseOrderService {
     value: any,
     throwsException = true,
   ): Promise<PurchaseOrder | null> {
-    return this.purchaseOrderRepo.findOne({ where: { [key]: value } }).then((stock) => {
-      if (!stock && throwsException) {
-        return Promise.reject(
-          new NotFoundException(`No purchase order found with ${key} ${value}`),
-        );
-      }
-      return Promise.resolve(stock ? stock : null);
-    });
+    return this.purchaseOrderRepo
+      .findOne({ where: { [key]: value } })
+      .then((stock) => {
+        if (!stock && throwsException) {
+          return Promise.reject(
+            new NotFoundException(
+              `No purchase order found with ${key} ${value}`,
+            ),
+          );
+        }
+        return Promise.resolve(stock ? stock : null);
+      });
   }
 }

@@ -51,3 +51,8 @@ export enum EnumTaskStatus {
   TO_DO = 'A faire',
   DONE = 'Terminer',
 }
+
+export enum EnumCarboyType {
+  'ENTER' = 'Entrée',
+  'EXIT' = 'Sortie'
+}
