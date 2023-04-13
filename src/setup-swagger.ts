@@ -28,7 +28,9 @@ export function setupSwagger(app: INestApplication): void {
       .addTag('breakdowns', 'Breakdowns management')
       .addTag('purchase orders', 'Purchase order management')
       .addTag('stocks', 'Stocks management')
-      // .addTag('planning', 'Planning management')
+      .addTag('fountains', 'Fountains management')
+      .addTag('materials', 'Materials management')
+      .addTag('payslips', 'Payslips management')
       .addBearerAuth()
       .build(),
   );

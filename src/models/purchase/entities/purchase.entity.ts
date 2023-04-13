@@ -8,19 +8,19 @@ export class Purchase extends AquavitaEntity {
   item: string;
 
   @Column()
-  quantity: number;
+  quantity: string;
 
   @Column()
-  unit_price: number;
+  unit_price: string;
 
   @Column()
-  initial_price: number;
+  initial_price: string;
 
   @ManyToOne(() => User, (user) => user.breakdowns, { eager: true })
   @JoinColumn()
   initiator: User;
 
-  @Column()
+  @Column({ nullable: true})
   observation: string;
 
   @Column()

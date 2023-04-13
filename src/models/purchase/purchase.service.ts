@@ -63,7 +63,8 @@ export class PurchaseService {
 
   async delete(purchaseId: string) {
     const foundPurchase = await this.getWhere('id', purchaseId);
-    await this.purchaseRepo.softDelete(foundPurchase);
+    foundPurchase.deleted_at = new Date();
+    await this.purchaseRepo.save(foundPurchase);
     return { deleted: true };
   }
 

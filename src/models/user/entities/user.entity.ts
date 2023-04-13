@@ -1,13 +1,10 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { Role } from '../../role/role.enum';
 import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
-import { EnumGender } from '../../../common/helpers';
-import { Task } from 'src/models/task/entities/task.entity';
+import { EnumEmployeeType, EnumGender } from '../../../common/helpers';
 import { UserQuarterPlanning } from '../../../common/entities/user-quarter-planning.entity';
-import { Department } from 'src/models/department/entities/department.entity';
-import { QuarterPlanning } from '../../../common/entities/quarter-planning.entity';
 import { Breakdown } from '../../breakdown/entities/breakdown.entity';
+import { Payslip } from '../../payslip/entities/payslip.entity';
 
 @Entity('users')
 export class User extends AquavitaEntity {
@@ -41,6 +38,13 @@ export class User extends AquavitaEntity {
 
   @Column({
     type: 'enum',
+    enum: EnumEmployeeType,
+    default: EnumEmployeeType.PRODUCTION,
+  })
+  employee_type: EnumEmployeeType;
+
+  @Column({
+    type: 'enum',
     enum: EnumGender,
     default: EnumGender.UNSPECIFIED,
   })
@@ -50,9 +54,9 @@ export class User extends AquavitaEntity {
   @Column({ default: false })
   has_change_pwd: boolean;
 
-  @ManyToOne(() => Department, (department) => department.users)
+  @OneToMany(() => Payslip, (payslip) => payslip.employee)
   @JoinColumn()
-  department: Department;
+  payslips: Payslip[];
 
   @Exclude()
   @Column({ default: 'user' })

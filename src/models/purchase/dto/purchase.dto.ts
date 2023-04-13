@@ -27,7 +27,7 @@ export class CreatePurchaseDto {
     required: true,
     example: '125',
   })
-  quantity: number;
+  quantity: string;
 
   @IsString()
   @IsNotEmpty()
@@ -36,7 +36,7 @@ export class CreatePurchaseDto {
     required: true,
     example: '12500000',
   })
-  unit_price: number;
+  unit_price: string;
 
   @IsString()
   @IsNotEmpty()
@@ -45,7 +45,7 @@ export class CreatePurchaseDto {
     required: true,
     example: '12500',
   })
-  initial_price: number;
+  initial_price: string;
 
   @IsString()
   @IsNotEmpty()

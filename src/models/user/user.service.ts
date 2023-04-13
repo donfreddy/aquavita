@@ -12,6 +12,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { UserQuarterPlanning } from 'src/common/entities/user-quarter-planning.entity';
 import {
+  EnumEmployeeType,
   hashPassword,
 } from 'src/common/helpers';
 import { generatePassword } from 'src/common/helpers/generate-password';
@@ -46,7 +47,7 @@ export class UserService {
     const hashedPassword = await hashPassword(userPassword);
 
     // set user role
-    const roles = [Role.User];
+    // const roles = [Role.User];
 
     try {
       const newUser = new User();
@@ -55,6 +56,7 @@ export class UserService {
       newUser.email = inputs.email;
       newUser.password = hashedPassword;
       newUser.phone = inputs.phone;
+      newUser.employee_type = inputs.employee_type;
       newUser.city = inputs.city;
       newUser.neighborhood = inputs.neighborhood;
       newUser.job = inputs.job;
@@ -69,8 +71,11 @@ export class UserService {
     }
   }
 
-  async getAll(): Promise<User[]> {
-    return this.userRepo.find();
+  async getAll(employeeType?: EnumEmployeeType): Promise<User[]> {
+    return this.userRepo.find({
+      where: employeeType ? { employee_type: employeeType } : {},
+      order: { first_name: 'ASC' },
+    });
   }
 
   async get(userId: string): Promise<User> {

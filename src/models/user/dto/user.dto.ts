@@ -1,5 +1,5 @@
 import {
-  IsEmail,
+  IsEmail, IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
+import { EnumEmployeeType } from '../../../common/helpers';
 
 export class CreateUserDto {
   @IsString()
@@ -54,6 +55,16 @@ export class CreateUserDto {
   })
   hiring_date: string;
 
+  // add employee type
+  @IsEnum(EnumEmployeeType)
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Employee type',
+    required: true,
+    example: EnumEmployeeType.PRODUCTION,
+  })
+  employee_type: EnumEmployeeType;
+
   @IsString()
   @IsNotEmpty()
   @IsOptional()
@@ -67,4 +78,5 @@ export class CreateUserDto {
   neighborhood: string;
 }
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
+export class UpdateUserDto extends PartialType(CreateUserDto) {
+}

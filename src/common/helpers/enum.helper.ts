@@ -56,3 +56,22 @@ export enum EnumCarboyType {
   'ENTER' = 'Entrée',
   'EXIT' = 'Sortie'
 }
+
+export enum EnumEmployeeType {
+  OFFICE = 'Bureau',
+  MAINTENANCE = 'Maintenancier',
+  PRODUCTION = 'Production',
+  DELIVERY = 'Livreur/Chauffeur',
+}
+
+export enum EnumPayslipStatus {
+  PAID = 'payé',
+  UNPAID = 'non payé',
+}
+
+export enum EnumMaterialType {
+  PLANT = 'Usine',
+  CAP = 'Capuchon',
+  PREFORM = 'Préforme',
+  BOTTLE = 'Bonbonne',
+}

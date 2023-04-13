@@ -5,16 +5,17 @@ import {
   Get,
   Param,
   Post,
-  Put,
+  Put, Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiBody, ApiBearerAuth, ApiTags, ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiBearerAuth, ApiTags, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { SwaggerApiResponse } from 'src/common/decorators/swagger-api.decorator';
 import { ApiResponse } from 'src/common/decorators/response.decorator';
 import { UpdateUserDto } from './dto/user.dto';
 import { CreateUserDto } from 'src/models/user/dto/user.dto';
 import { UserService } from 'src/models/user/user.service';
+import { EnumEmployeeType } from '../../common/helpers';
 
 @ApiBearerAuth()
 @SwaggerApiResponse()
@@ -35,8 +36,16 @@ export class UserController {
   @Get()
   @ApiResponse('Get all users successfully.')
   @ApiOperation({ summary: 'Get all users.' })
-  async getAllUsers(): Promise<any> {
-    return await this.user.getAll();
+  @ApiQuery({
+    name: 'type',
+    description: 'The employee type',
+    enum: EnumEmployeeType,
+    required: false,
+  })
+  async getAllUsers(
+    @Query('type') employeeType: EnumEmployeeType,
+  ): Promise<any> {
+    return await this.user.getAll(employeeType);
   }
 
   @Get(':id')

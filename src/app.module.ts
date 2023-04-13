@@ -1,15 +1,14 @@
-import { CarboyModule } from './models/carboy/carboy.module';
-import { PurchaseModule } from './models/purchase/purchase.module';
-import { FountainModule } from './models/fountain/fountain.module';
-import { DepartmentModule } from './models/department/department.module';
-import { StockModule } from './models/stock/stock.module';
-import { PlanningModule } from './models/planning/planning.module';
-import { TaskModule } from './models/task/task.module';
 import {
   ClassSerializerInterceptor,
   MiddlewareConsumer,
   Module,
 } from '@nestjs/common';
+import { CarboyModule } from './models/carboy/carboy.module';
+import { PurchaseModule } from './models/purchase/purchase.module';
+import { FountainModule } from './models/fountain/fountain.module';
+import { StockModule } from './models/stock/stock.module';
+import { PlanningModule } from './models/planning/planning.module';
+import { TaskModule } from './models/task/task.module';
 import { AppController } from './app.controller';
 import { UserModule } from './models/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -27,13 +26,21 @@ import { LocalFileModule } from './models/local-file/local-file.module';
 import { QuarterTimeModule } from './models/quater-time/quarter-time.module';
 import { BreakdownModule } from './models/breakdown/breakdown.module';
 import { PurchaseOrderModule } from './models/purchase-order/purchase-order.module';
+import { PayslipModule } from './models/payslip/payslip.module';
+import { MaterialModule } from './models/material/material.module';
 
 @Module({
   imports: [
+    // Internal module
+    AuthModule,
+    LocalFileModule,
+    OtpModule,
+    UserModule,
     CarboyModule,
     PurchaseModule,
     FountainModule,
-    DepartmentModule,
+    PayslipModule,
+    MaterialModule,
     StockModule,
     PurchaseOrderModule,
     BreakdownModule,
@@ -41,13 +48,6 @@ import { PurchaseOrderModule } from './models/purchase-order/purchase-order.modu
     TaskModule,
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     TypeOrmModule.forFeature([LocalFile]),
-
-    // Internal module
-    AuthModule,
-    LocalFileModule,
-    OtpModule,
-    UserModule,
-    // EmployeeModule,
     QuarterTimeModule,
     PdfModule,
     MailModule,

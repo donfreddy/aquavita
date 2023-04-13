@@ -5,17 +5,27 @@ import { HttpExceptionFilter } from './common/exceptions/filters/exception.filte
 import { ValidationPipe } from './common/pipes/validatetion.pipe';
 import { setupSwagger } from './setup-swagger';
 
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  app.use(bodyParser.json({limit: '50mb'}));
-  app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+  app.use(bodyParser.json({ limit: '50mb' }));
+  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
   // Set global path
   app.setGlobalPrefix('/api');
+
+  // Check if app is running on production and set basic auth
+  // if (configService.isProduction()) {
+  //   app.use(['/api/docs'],
+  //     basicAuth({
+  //       challenge: true,
+  //       users: { admin: 'admin' },
+  //     }));
+  // }
 
   // Swagger
   setupSwagger(app);
