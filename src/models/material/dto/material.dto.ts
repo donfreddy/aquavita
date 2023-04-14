@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { EnumMaterialType } from '../../../common/helpers';
 import { User } from '../../user/entities/user.entity';
@@ -30,17 +30,21 @@ export class CreateMaterialDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     description: 'Release date',
     example: '2023-10-03',
+    required: false,
   })
   release_date: Date;
 
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     description: 'Exit date',
     example: '2023-10-03',
+    required: false,
   })
   exit_date: Date;
 

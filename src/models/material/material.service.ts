@@ -21,8 +21,8 @@ export class MaterialService {
     newMaterial.state_of_material = inputs.state_of_material;
     newMaterial.delivery_note = inputs.delivery_note;
     newMaterial.vehicle = inputs.vehicle;
-    newMaterial.exit_date = new Date(inputs.exit_date);
-    newMaterial.release_date = new Date(inputs.release_date);
+    if (inputs.exit_date) newMaterial.exit_date = new Date(inputs.exit_date);
+    if (inputs.release_date) newMaterial.release_date = new Date(inputs.release_date);
     const user = await this.user.getWhere('id', inputs.driver_id);
     if (user) {
       newMaterial.driver = user;

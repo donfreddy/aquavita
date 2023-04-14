@@ -5,9 +5,9 @@ export enum EnumGender {
 }
 
 export enum EnumEnv {
-  DEV = 'dev',
-  STG = 'stg',
-  PRD = 'prd',
+  DEV = 'development',
+  STG = 'staging',
+  PRD = 'production',
 }
 
 export enum EnumStatusCode {

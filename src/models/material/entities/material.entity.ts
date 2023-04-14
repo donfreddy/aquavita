@@ -3,7 +3,7 @@ import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
 import { EnumMaterialType } from '../../../common/helpers';
 import { User } from '../../user/entities/user.entity';
 
-@Entity('material')
+@Entity('materials')
 export class Material extends AquavitaEntity {
   @Column({
     type: 'enum',
@@ -18,10 +18,10 @@ export class Material extends AquavitaEntity {
   @Column()
   delivery_note: string;
 
-  @Column()
+  @Column({ nullable: true})
   release_date: Date;
 
-  @Column()
+  @Column({ nullable: true})
   exit_date: Date;
 
   @Column()

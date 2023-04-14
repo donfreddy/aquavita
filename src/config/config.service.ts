@@ -24,9 +24,13 @@ class ConfigService {
     return this.getValue('UPLOADED_FILES_DESTINATION');
   }
 
+  public getPort() {
+    return this.getValue('PORT') || '3000';
+  }
+
   public getJWT() {
     return {
-      secretKey: this.getValue('APP_PORT', false) || 'xxxxxx',
+      secretKey: this.getValue('PORT', false) || 'xxxxxx',
       expiresIn: this.getValue('APP_PORT', false) || '1d',
     };
   }
@@ -41,7 +45,7 @@ class ConfigService {
   }
 
   public isProduction() {
-    const mode = this.getValue('APP_MODE', false);
+    const mode = this.getValue('NODE_ENV', false);
     return mode != EnumEnv.DEV;
   }
 
