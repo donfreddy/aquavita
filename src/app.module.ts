@@ -28,6 +28,7 @@ import { BreakdownModule } from './models/breakdown/breakdown.module';
 import { PurchaseOrderModule } from './models/purchase-order/purchase-order.module';
 import { PayslipModule } from './models/payslip/payslip.module';
 import { MaterialModule } from './models/material/material.module';
+import { PresenceModule } from './models/presence/presence.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { MaterialModule } from './models/material/material.module';
     QuarterTimeModule,
     PdfModule,
     MailModule,
+    PresenceModule
   ],
   controllers: [AppController],
   providers: [

@@ -57,6 +57,11 @@ export enum EnumCarboyType {
   'EXIT' = 'Sortie'
 }
 
+export enum EnumPresenceStatus {
+  ABSENT = 'Absent',
+  PRESENT = 'Présent',
+}
+
 export enum EnumEmployeeType {
   OFFICE = 'Bureau',
   MAINTENANCE = 'Maintenancier',

@@ -31,6 +31,7 @@ export function setupSwagger(app: INestApplication): void {
       .addTag('fountains', 'Fountains management')
       .addTag('materials', 'Materials management')
       .addTag('payslips', 'Payslips management')
+      .addTag('presences', 'Presences management')
       .addBearerAuth()
       .build(),
   );
