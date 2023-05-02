@@ -74,9 +74,20 @@ export enum EnumPayslipStatus {
   UNPAID = 'non payé',
 }
 
+export enum EnumDeliverySlipStatus {
+  PENDING = 'En attente',
+  IN_PROGRESS = 'En cours',
+  DONE = 'Terminé',
+}
+
 export enum EnumMaterialType {
   PLANT = 'Usine',
   CAP = 'Capuchon',
   PREFORM = 'Préforme',
   BOTTLE = 'Bonbonne',
+}
+
+export enum EnumCustomerType {
+  CONSUMPTION = 'Consommation',
+  CONTRACT = 'Contrat',
 }

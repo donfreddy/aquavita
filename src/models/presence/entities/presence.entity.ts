@@ -13,6 +13,7 @@ export class Presence extends AquavitaEntity {
   @Column({
     type: 'enum',
     enum: EnumPresenceStatus,
+    default: EnumPresenceStatus.PRESENT,
   })
   status: EnumPresenceStatus;
 
@@ -22,13 +23,13 @@ export class Presence extends AquavitaEntity {
   @Column({ default: false })
   archived: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   visitor_name: string;
 
-  @Column()
+  @Column({ nullable: true })
   visitor_phone_number: string;
 
-  @Column()
+  @Column({ nullable: true })
   motif: string;
 
   @Column()

@@ -42,7 +42,7 @@ export class CreatePresenceDto {
   })
   is_visitor: boolean;
 
-  @IsEnum(EnumCarboyType)
+  @IsEnum(EnumPresenceStatus)
   @IsNotEmpty()
   @ApiProperty({
     description: 'Presence status',

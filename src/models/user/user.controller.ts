@@ -71,7 +71,6 @@ export class UserController {
   @ApiParam({ name: 'id', description: 'The user id' })
   async deleteUser(@Param('id') id: string): Promise<any> {
     return await this.user.remove(id);
-    // return new SuccessResponse('User deleted successfully.', result);
   }
 }
                       
