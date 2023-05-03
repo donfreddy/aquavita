@@ -5,11 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  IPaginationOptions,
-  Pagination,
-  paginate,
-} from 'nestjs-typeorm-paginate';
 import { UserQuarterPlanning } from 'src/common/entities/user-quarter-planning.entity';
 import {
   EnumEmployeeType,
@@ -17,7 +12,6 @@ import {
 } from 'src/common/helpers';
 import { generatePassword } from 'src/common/helpers/generate-password';
 import { DeepPartial, Repository } from 'typeorm';
-import { Role } from '../role/role.enum';
 import { CreateUserDto } from './dto/user.dto';
 import { User } from './entities/user.entity';
 

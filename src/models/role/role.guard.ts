@@ -1,8 +1,8 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { Role } from './role.enum';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RequestWithUser } from '../../common/interfaces';
 import { Reflector } from '@nestjs/core';
+import { Role } from './role.entity';
 
 @Injectable()
 export class RolesGuard extends JwtAuthGuard {
@@ -11,7 +11,7 @@ export class RolesGuard extends JwtAuthGuard {
   }
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>('job', [
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>('roles', [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -19,6 +19,6 @@ export class RolesGuard extends JwtAuthGuard {
       return true;
     }
     const { user } = context.switchToHttp().getRequest<RequestWithUser>();
-    return requiredRoles.some((role) => user?.job === role);
+    return requiredRoles.some((role) => user?.role === role);
   }
 }

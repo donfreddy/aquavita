@@ -54,7 +54,7 @@ export enum EnumTaskStatus {
 
 export enum EnumCarboyType {
   'ENTER' = 'Entrée',
-  'EXIT' = 'Sortie'
+  'EXIT' = 'Sortie',
 }
 
 export enum EnumPresenceStatus {
@@ -91,3 +91,4 @@ export enum EnumCustomerType {
   CONSUMPTION = 'Consommation',
   CONTRACT = 'Contrat',
 }
+

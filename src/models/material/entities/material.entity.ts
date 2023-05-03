@@ -25,7 +25,7 @@ export class Material extends AquavitaEntity {
   exit_date: Date;
 
   @Column()
-  state_of_material: string; //
+  state_of_material: string;
 
   @Column()
   vehicle: string;

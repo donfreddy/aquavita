@@ -30,6 +30,7 @@ import { PayslipModule } from './models/payslip/payslip.module';
 import { MaterialModule } from './models/material/material.module';
 import { PresenceModule } from './models/presence/presence.module';
 import { CustomerModule } from './models/customer/customer.module';
+import { PermissionModule } from './permission/permission.module';
 import { DeliverySlipModule } from './models/delivery-slip/delivery-slip.module';
 
 @Module({
@@ -56,7 +57,8 @@ import { DeliverySlipModule } from './models/delivery-slip/delivery-slip.module'
     MailModule,
     PresenceModule,
     CustomerModule,
-    DeliverySlipModule
+    DeliverySlipModule,
+    PermissionModule
   ],
   controllers: [AppController],
   providers: [

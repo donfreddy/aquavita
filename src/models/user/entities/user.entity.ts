@@ -1,10 +1,11 @@
-import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
 import { EnumEmployeeType, EnumGender } from '../../../common/helpers';
 import { UserQuarterPlanning } from '../../../common/entities/user-quarter-planning.entity';
 import { Breakdown } from '../../breakdown/entities/breakdown.entity';
 import { Payslip } from '../../payslip/entities/payslip.entity';
+import { Role } from 'src/models/role/role.entity';
 
 @Entity('users')
 export class User extends AquavitaEntity {
@@ -49,6 +50,10 @@ export class User extends AquavitaEntity {
     default: EnumGender.UNSPECIFIED,
   })
   gender: EnumGender;
+
+  @ManyToOne(() => Role)
+  @JoinColumn()
+  role: Role;
 
   @Exclude()
   @Column({ default: false })

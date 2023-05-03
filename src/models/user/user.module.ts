@@ -10,5 +10,7 @@ import { UserQuarterPlanning } from '../../common/entities/user-quarter-planning
   imports: [TypeOrmModule.forFeature([User, UserQuarterPlanning])],
   controllers: [UserController, ProfileController],
   providers: [UserService],
+  exports: [UserService],
 })
-export class UserModule {}
+export class UserModule {
+}
