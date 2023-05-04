@@ -1,25 +1,28 @@
-import { Entity, Column, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
-import { User } from '../../user/entities/user.entity';
 import { Customer } from '../../customer/entities/customer.entity';
 import { EnumDeliverySlipStatus } from '../../../common/helpers';
+import { DelivererActivity } from './deliverer-activity.entity';
 
 @Entity('delivery_slips')
 export class DeliverySlip extends AquavitaEntity {
   @Column()
-  designation: string;
+  type: string;
 
   @Column()
-  qty_delivered: string;
-
-  @Column({ default: '0' })
-  qty_recovered_in_state: string;
-
-  @Column({ default: '0' })
-  qty_recovered_in_broken: string;
+  contract: string;
 
   @Column()
-  po_number: string;
+  delivery_address: string;
+
+  @Column()
+  carboys_delivered: string;
+
+  @Column({ default: '0' })
+  carboys_recovered_in_state: string;
+
+  @Column({ default: '0' })
+  carboys_recovered_in_broken: string;
 
   @Column({
     type: 'enum',
@@ -28,15 +31,12 @@ export class DeliverySlip extends AquavitaEntity {
   })
   status: EnumDeliverySlipStatus;
 
-  // @OneToOne(() => PurchaseOrder, { eager: true })
-  // purchase_order: PurchaseOrder;
+  @Column()
+  observation: string;
 
   @ManyToOne(() => Customer, { eager: true })
   customer: Customer;
 
-  @Column()
-  delivery_date: Date;
-
-  @ManyToOne(() => User, { eager: true })
-  deliverer: User;
+  @ManyToOne(() => DelivererActivity,(delivererActivity)=>delivererActivity.delivery_slips)
+  deliverer_activity: DelivererActivity;
 }

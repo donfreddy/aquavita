@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany, JoinColumn } from 'typeorm';
 import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
 import { EnumCustomerType } from '../../../common/helpers';
-import { DeliverySlip } from '../../delivery-slip/entities/delivery-slip.entity';
+import { DeliverySlip } from '../../deliverer-activity/entities/delivery-slip.entity';
 
 @Entity('customers')
 export class Customer extends AquavitaEntity {
