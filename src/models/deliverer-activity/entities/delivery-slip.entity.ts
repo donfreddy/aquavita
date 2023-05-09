@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne } from 'typeorm';
 import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
 import { Customer } from '../../customer/entities/customer.entity';
 import { EnumDeliverySlipStatus } from '../../../common/helpers';
@@ -37,6 +37,6 @@ export class DeliverySlip extends AquavitaEntity {
   @ManyToOne(() => Customer, { eager: true })
   customer: Customer;
 
-  @ManyToOne(() => DelivererActivity,(delivererActivity)=>delivererActivity.delivery_slips)
+  @ManyToOne(() => DelivererActivity, (delivererActivity) => delivererActivity.delivery_slips)
   deliverer_activity: DelivererActivity;
 }

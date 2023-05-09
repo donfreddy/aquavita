@@ -12,12 +12,15 @@ export const PERMISSIONS = Symbol('PERMISSIONS');
 
 @Injectable()
 export class Permissions {
-  constructor(@Inject(REQUEST) private readonly request: ExpressRequest) {}
+  constructor(@Inject(REQUEST) private readonly request: ExpressRequest) {
+  }
 
   /**
    * In-controller helper for permissions checks after the initial
    * decorator-based permission has been evaluated
-   * @param requiredPermission the permission to evaluate against
+   * @param resourceType
+   * @param action
+   * @param target
    * @returns true if the current user has the required permission
    */
   canActivate(

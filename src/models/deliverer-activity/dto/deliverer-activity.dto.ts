@@ -21,16 +21,6 @@ export class CreateDelivererActivityDto {
   delivery_date: Date;
 
   @IsString()
-  @IsOptional()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: 'Delivery zone',
-    example: 'Bonamoussadi 2',
-    required: false,
-  })
-  zone: string;
-
-  @IsString()
   @IsNotEmpty()
   @IsOptional()
   @ApiProperty({

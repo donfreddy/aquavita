@@ -1,6 +1,7 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { EnumCustomerType } from '../../../common/helpers';
+import { CreateAddressDto } from './address.dto';
 
 export class CreateCustomerDto {
   @IsString()
@@ -12,6 +13,15 @@ export class CreateCustomerDto {
   })
   name: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Customer code',
+    required: true,
+    example: '292',
+  })
+  code: string;
+
   @IsEnum(EnumCustomerType)
   @IsNotEmpty()
   @ApiProperty({
@@ -22,15 +32,6 @@ export class CreateCustomerDto {
   type: EnumCustomerType;
 
   @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: 'Customer address',
-    required: true,
-    example: 'Ndokotti',
-  })
-  address: string;
-
-  @IsString()
   @IsOptional()
   @IsNotEmpty()
   @ApiProperty({
@@ -39,6 +40,11 @@ export class CreateCustomerDto {
     example: '20',
   })
   carboys_per_week: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Customer address'})
+  address: CreateAddressDto;
 }
 
 export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {

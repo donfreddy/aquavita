@@ -33,6 +33,17 @@ export class DelivererActivityController {
     return await this.delivererActivity.getAll();
   }
 
+  @Get(':id')
+  @ApiResponse()
+  @SwaggerApiResponse()
+  @ApiParam({ name: 'id', description: 'The deliverer activity report id' })
+  @ApiOperation({ summary: 'Get deliverer activity report.' })
+  async getDelivererActivity(
+    @Param('id') delivererActivityId: string,
+  ): Promise<any> {
+    return await this.delivererActivity.get(delivererActivityId);
+  }
+
   @Put(':id')
   @ApiResponse()
   @ApiParam({ name: 'id', description: 'The deliverer activity report id' })

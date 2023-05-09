@@ -52,9 +52,11 @@ export class CreateDeliverySlipDto {
   carboys_recovered_in_broken: string;
 
   @IsEnum(EnumDeliverySlipStatus)
+  @IsOptional()
   @IsNotEmpty()
   @ApiProperty({
     description: 'Delivery slip status',
+    required: false,
     example: EnumDeliverySlipStatus.PENDING,
   })
   status: EnumDeliverySlipStatus;

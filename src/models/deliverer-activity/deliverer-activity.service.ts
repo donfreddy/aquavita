@@ -31,7 +31,6 @@ export class DelivererActivityService {
     }));
     newDelivererActivity.deliverers = deliverers;
     newDelivererActivity.imma_vehicle = inputs.imma_vehicle;
-    newDelivererActivity.zone = inputs.zone;
     const driver = await this.user.getWhere('id', inputs.driver_id);
     if (driver) newDelivererActivity.driver = driver;
     newDelivererActivity.delivery_date = new Date(inputs.delivery_date);
@@ -56,6 +55,11 @@ export class DelivererActivityService {
     });
   }
 
+
+  async get(delivererActivityId: string): Promise<DelivererActivity> {
+    return this.getWhere('id', delivererActivityId );
+  }
+
   async update(delivererActivityId: string, inputs: UpdateDelivererActivityDto) {
     const foundDelivererActivity = await this.getWhere('id', delivererActivityId);
 
@@ -69,7 +73,6 @@ export class DelivererActivityService {
     }
 
     if (inputs.imma_vehicle) foundDelivererActivity.imma_vehicle = inputs.imma_vehicle;
-    if (inputs.zone) foundDelivererActivity.zone = inputs.zone;
     if (inputs.driver_id) {
       const driver = await this.user.getWhere('id', inputs.driver_id);
       if (driver) foundDelivererActivity.driver = driver;
@@ -122,9 +125,6 @@ export class DelivererActivityService {
           id: foundDelivererActivity.id,
         },
       },
-      relations: {
-        deliverer_activity: true,
-      },
       order: { created_at: 'DESC' },
     });
   }
@@ -132,7 +132,9 @@ export class DelivererActivityService {
   async getDelivererSlip(delivererActivityId: string, deliverySlipId: string) {
     const foundDelivererActivity = await this.getWhere('id', delivererActivityId);
     const deliverySlip = await this.deliverySlipRepo.findOne({
-      where: { id: deliverySlipId, deliverer_activity: foundDelivererActivity },
+      where: { id: deliverySlipId, deliverer_activity: {
+        id:foundDelivererActivity.id
+        } },
     });
     if (!deliverySlip) {
       return Promise.reject(new NotFoundException('No delivery slip found'));
@@ -143,6 +145,7 @@ export class DelivererActivityService {
   async updateDelivererSlip(delivererActivityId: string, deliverySlipId: string, inputs: UpdateDeliverySlipDto) {
     await this.getWhere('id', delivererActivityId);
     const foundDeliverySlip = await this.getDelivererSlip(delivererActivityId, deliverySlipId);
+    console.log(foundDeliverySlip);
 
     if (inputs.type) foundDeliverySlip.type = inputs.type;
     if (inputs.contract) foundDeliverySlip.contract = inputs.contract;

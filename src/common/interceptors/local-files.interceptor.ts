@@ -34,7 +34,6 @@ function LocalFilesInterceptor(
       this.fileInterceptor = new (FileInterceptor(
         options.fieldName,
         multerOptions,
-        
       ))();
     }
 

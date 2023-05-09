@@ -32,6 +32,15 @@ export class CustomerController {
     return await this.customer.getAll();
   }
 
+  @Get()
+  @ApiResponse()
+  @ApiOperation({ summary: 'Get customer by Id' })
+  async getCustomer(
+    @Param('id') customerId: string,
+  ): Promise<any> {
+    return await this.customer.get(customerId);
+  }
+
   @Put(':id')
   @ApiResponse()
   @ApiOperation({ summary: 'Update customer.' })

@@ -92,3 +92,16 @@ export enum EnumCustomerType {
   CONTRACT = 'Contrat',
 }
 
+export enum EnumUpkeepType {
+  FOUNTAIN = 'Fontaine',
+  AIR_CONDITIONER = 'Climatiseur',
+  FREEZER = 'Congélateur',
+  POULTRY = 'Pondeuse',
+}
+
+export enum EnumUpkeepStatus {
+  OK = 'OK',
+  NOT_OK = 'Not OK',
+  NOT_YET = 'Not yet',
+}
+

@@ -7,7 +7,7 @@ import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { UserQuarterPlanning } from '../../common/entities/user-quarter-planning.entity';
 import { UserService } from '../user/user.service';
 import { QuarterPlanning } from '../../common/entities/quarter-planning.entity';
-import { EnumQuarterPlanningStatus, EnumQuarterTimeStatus } from '../../common/helpers';
+import { EnumQuarterTimeStatus } from '../../common/helpers';
 
 export class QuarterTimeService {
   constructor(

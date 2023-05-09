@@ -26,7 +26,7 @@ export function generateGlobalPermissions(role: PermissionRole): Permission[] {
     case PermissionRole.VIGIL:
       return [];
     default:
-      throw new BadRequestException(`Unsuported workspace role -${role}-`);
+      throw new BadRequestException(`Unsupported workspace role -${role}-`);
   }
 }
 

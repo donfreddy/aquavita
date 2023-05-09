@@ -13,6 +13,7 @@ export class CustomerService {
   }
 
   async create(inputs: CreateCustomerDto) {
+
     return this.customerRepo
       .save(inputs)
       .then((entity) => this.getWhere('id', (entity as Customer).id))
@@ -25,11 +26,15 @@ export class CustomerService {
     });
   }
 
+  async get(customerId: string) {
+    return this.getWhere('id', customerId, []);
+  }
+
   async update(customerId: string, inputs: UpdateCustomerDto) {
     const foundCustomer = await this.getWhere('id', customerId);
     if (inputs.name) foundCustomer.name = inputs.name;
     if (inputs.type) foundCustomer.type = inputs.type;
-    if (inputs.address) foundCustomer.address = inputs.address;
+    // if (inputs.address) foundCustomer.address = inputs.address;
     if (inputs.carboys_per_week) foundCustomer.carboys_per_week = inputs.carboys_per_week;
 
     await this.customerRepo.save(foundCustomer);
@@ -45,10 +50,11 @@ export class CustomerService {
   async getWhere(
     key: keyof Customer,
     value: any,
+    relations: string[] = [],
     throwsException = true,
   ): Promise<Customer | null> {
     return this.customerRepo
-      .findOne({ where: { [key]: value } })
+      .findOne({ where: { [key]: value }, relations })
       .then((customer) => {
         if (!customer && throwsException) {
           throw new NotFoundException();

@@ -64,13 +64,13 @@ export class BreakdownService {
     value: any,
     throwsException = true,
   ): Promise<Breakdown | null> {
-    return this.breakdownRepo.findOne({ where: { [key]: value } }).then((stock) => {
-      if (!stock && throwsException) {
+    return this.breakdownRepo.findOne({ where: { [key]: value } }).then((breakdown) => {
+      if (!breakdown && throwsException) {
         return Promise.reject(
           new NotFoundException(`No breakdown found with ${key} ${value}`),
         );
       }
-      return Promise.resolve(stock ? stock : null);
+      return Promise.resolve(breakdown ? breakdown : null);
     });
   }
 }

@@ -6,7 +6,7 @@ import {
   GetResourceIdFn,
   REQUIRED_PERMISSION,
   RequiredPermission,
-} from '../decorators/permissions.decorator';
+} from '../decorators/permission.decorator';
 import { Permission } from '../types/permission.type';
 import { PermissionEffect } from '../enum/permission.enum';
 import {
@@ -21,7 +21,8 @@ export class PermissionsGuard implements CanActivate {
     private readonly httpAdapterHost: HttpAdapterHost,
     private readonly permission: PermissionService,
     private readonly reflector: Reflector,
-  ) {}
+  ) {
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -29,7 +30,7 @@ export class PermissionsGuard implements CanActivate {
 
     const requiredPermission = this.getRequiredPermission(context);
 
-    const { role, permissions: grantedPermissions } =
+    const { permissions: grantedPermissions } =
       await this.permission.getPermissions(request.user.userId);
 
     if (!grantedPermissions.length) {
@@ -45,8 +46,8 @@ export class PermissionsGuard implements CanActivate {
       return false;
     }
 
-    let path = httpAdapter.getRequestUrl(request);
-    let deniedResourcesIds: string[] = null;
+    const path = httpAdapter.getRequestUrl(request);
+    const deniedResourcesIds: string[] = null;
     let allowedResourcesIds: string[] = null;
 
     switch (path) {

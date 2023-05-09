@@ -32,6 +32,7 @@ import { PresenceModule } from './models/presence/presence.module';
 import { CustomerModule } from './models/customer/customer.module';
 import { PermissionModule } from './permission/permission.module';
 import { DelivererActivityModule } from './models/deliverer-activity/deliverer-activity.module';
+import { UpkeepModule } from './models/upkeep/upkeep.module';
 
 @Module({
   imports: [
@@ -58,7 +59,8 @@ import { DelivererActivityModule } from './models/deliverer-activity/deliverer-a
     PresenceModule,
     CustomerModule,
     DelivererActivityModule,
-    PermissionModule
+    PermissionModule,
+    UpkeepModule
   ],
   controllers: [AppController],
   providers: [

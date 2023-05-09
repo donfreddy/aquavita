@@ -11,9 +11,6 @@ export class DelivererActivity extends AquavitaEntity {
   @Column()
   delivery_date: Date;
 
-  @Column({ nullable: true })
-  zone: string;
-
   @Column()
   exit_time: Date;
 
