@@ -1,8 +1,9 @@
-import { Entity, Column, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
 import { Customer } from '../../customer/entities/customer.entity';
 import { EnumDeliverySlipStatus } from '../../../common/helpers';
 import { DelivererActivity } from './deliverer-activity.entity';
+import { Invoice } from '../../invoice/entities/invoice.entity';
 
 @Entity('delivery_slips')
 export class DeliverySlip extends AquavitaEntity {
@@ -37,6 +38,11 @@ export class DeliverySlip extends AquavitaEntity {
   @ManyToOne(() => Customer, { eager: true })
   customer: Customer;
 
+  @ManyToOne(() => Invoice, (invoice) => invoice.delivery_slips)
+  @JoinColumn({ name: 'invoice_id' })
+  invoice: Invoice;
+
   @ManyToOne(() => DelivererActivity, (delivererActivity) => delivererActivity.delivery_slips)
+  @JoinColumn({ name: 'deliverer_activity_id' })
   deliverer_activity: DelivererActivity;
 }

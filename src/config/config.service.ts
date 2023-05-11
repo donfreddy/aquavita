@@ -28,6 +28,13 @@ class ConfigService {
     return this.getValue('PORT') || '3000';
   }
 
+  public getServer(){
+    return {
+      url: this.getValue('SERVER_URL'),
+      desc: this.getValue('SERVER_DESCRIPTION'),
+    }
+  }
+
   public getJWT() {
     return {
       secretKey: this.getValue('PORT', false) || 'xxxxxx',
@@ -37,10 +44,10 @@ class ConfigService {
 
   public getMailConfig() {
     return {
-      host: this.getValue('MAIL_HOST'),
-      user: this.getValue('MAIL_USER'),
-      password: this.getValue('MAIL_PASSWORD'),
-      from: this.getValue('MAIL_FROM'),
+      host: this.getValue('EMAIL_HOST'),
+      user: this.getValue('EMAIL_USER'),
+      password: this.getValue('EMAIL_PASSWORD'),
+      from: this.getValue('EMAIL_FROM'),
     };
   }
 

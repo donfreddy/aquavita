@@ -1,7 +1,6 @@
 import { EnumOtpRaison } from '../../common/helpers';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { generateOtpCode } from 'src/common/helpers/helper';
 import { Repository, UpdateResult } from 'typeorm';
 import { Otp } from './entities/otp.entity';
 import { User } from '../user/entities/user.entity';
@@ -18,21 +17,17 @@ export class OtpService {
    * Create new OTP code for user
    *
    * @param {User} user The user that owns the OTP code
+   * @param {string} otpCode The OTP code
    * @param {EnumOtpRaison} raison It's from {@link EnumOtpRaison} enum type.
    *
    * @returns {Promise<Otp>}
    */
-  async create(user: User, raison?: EnumOtpRaison): Promise<Otp> {
-    let newCode = generateOtpCode();
-    // make sur it's unique on database
-    while ((await this.getWhere('code', newCode)) != undefined) {
-      newCode = generateOtpCode();
-    }
+  async create(user: User, otpCode: string, raison?: EnumOtpRaison): Promise<Otp> {
     const now = new Date();
     const expiredAt = new Date(now.getTime() + 30 * 60 * 1000); // 30min later
 
     const otp = new Otp();
-    otp.code = newCode;
+    otp.code = otpCode;
     otp.user = user;
     otp.reason = raison ?? null;
     otp.created_at = now;

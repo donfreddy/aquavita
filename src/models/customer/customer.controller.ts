@@ -1,7 +1,7 @@
 import { Body, Controller, HttpStatus, Get, Post, UseGuards, Put, Param, Delete } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from '../../common/decorators/response.decorator';
 import { SwaggerApiResponse } from '../../common/decorators/swagger-api.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -32,8 +32,9 @@ export class CustomerController {
     return await this.customer.getAll();
   }
 
-  @Get()
+  @Get(':id')
   @ApiResponse()
+  @ApiParam({ name: 'id', description: 'The customer id' })
   @ApiOperation({ summary: 'Get customer by Id' })
   async getCustomer(
     @Param('id') customerId: string,
@@ -43,6 +44,7 @@ export class CustomerController {
 
   @Put(':id')
   @ApiResponse()
+  @ApiParam({ name: 'id', description: 'The customer id' })
   @ApiOperation({ summary: 'Update customer.' })
   @ApiBody({ description: 'Update customer', type: UpdateCustomerDto })
   async updateCustomer(
@@ -54,6 +56,7 @@ export class CustomerController {
 
   @Delete(':id')
   @ApiResponse()
+  @ApiParam({ name: 'id', description: 'The customer id' })
   @ApiOperation({ summary: 'Delete customer.' })
   async deleteCustomer(
     @Param('id') customerId: string,

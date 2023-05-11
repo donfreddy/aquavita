@@ -3,7 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
-  BadRequestException
+  BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as _ from 'lodash';
@@ -15,18 +15,20 @@ import {
 } from 'src/common/helpers';
 import { User } from 'src/models/user/entities/user.entity';
 import { UserService } from 'src/models/user/user.service';
-import { ForgotPasswordDto, LoginDto, ResetPasswordDto } from './dto/auth.dto';
-import { Response } from 'express';
+import { CheckOtpDto, ForgotPasswordDto, LoginDto, ResetPasswordDto } from './dto/auth.dto';
 import { OtpService } from 'src/models/otp/otp.service';
 import { CreateUserDto } from '../models/user/dto/user.dto';
 import { JwtPayload } from '../common/interfaces';
+import { MailPayload } from '../common/dtos/mail-payload';
+import { MailService } from '../mail/mail.service';
+import { Otp } from '../models/otp/entities/otp.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly user: UserService,
     private readonly jwt: JwtService,
-    // private readonly mail: MailService,
+    private readonly mail: MailService,
     private readonly otp: OtpService,
   ) {
   }
@@ -51,7 +53,7 @@ export class AuthService {
     }
   }
 
-  async register( inputs: CreateUserDto): Promise<any> {
+  async register(inputs: CreateUserDto): Promise<any> {
     try {
       const user = await this.user.create(inputs);
       return { user: _.pick(user, ['id', 'email']) };
@@ -77,21 +79,16 @@ export class AuthService {
       await this.otp.update(foundOtp);
 
       // send mail to the user
-      // await this.mail.sendPasswordResetEmail(user, foundToken.token);
+      await this.sendPasswordResetEmail(user, foundOtp.code);
       return { success: true };
     }
 
-    let newCode = generateOtpCode();
-    // make sur it's unique on database
-    while ((await this.otp.getWhere('code', newCode)) != undefined) {
-      newCode = generateOtpCode();
-    }
-
-    // Create new otp code
-    await this.otp.create(user, EnumOtpRaison.RESET_PASSWORD);
+    // Create new otp code if no
+    const newCode = await this.getOtp();
+    await this.otp.create(user, newCode, EnumOtpRaison.RESET_PASSWORD);
 
     // send mail to the user
-    //  await this.mail.sendPasswordResetEmail(user, resetToken);
+    await this.sendPasswordResetEmail(user, newCode);
     return { success: true };
   }
 
@@ -121,6 +118,34 @@ export class AuthService {
     return { success: true };
   }
 
+  async checkOpt(inputs: CheckOtpDto) {
+    await this.verifyOtp(inputs.otp_code);
+    return { success: true };
+  }
+
+  private async verifyOtp(code: string, reason?: EnumOtpRaison): Promise<Otp> {
+    const otp = await this.otp.getWhere('code', code, reason);
+    if (!otp) {
+      throw new BadRequestException('Invalid OTP code.');
+    }
+
+    if (await this.otp.isExpired(otp)) {
+      await this.otp.delete(otp);
+      throw new BadRequestException('OTP code is expired.');
+    }
+
+    if (otp.is_used) {
+      throw new BadRequestException('OTP code is already used.');
+    }
+
+    if (reason && otp.reason !== reason) {
+      throw new BadRequestException('OTP code is invalid.');
+    }
+
+    return otp;
+  }
+
+
   private async generateToken(
     user: User,
   ): Promise<{ user: User; token: string }> {
@@ -136,5 +161,27 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     return Promise.resolve(user);
+  }
+
+  private async getOtp(): Promise<string> {
+    let newCode = generateOtpCode();
+    // make sur it's unique on database
+    while ((await this.otp.getWhere('code', newCode)) != undefined) {
+      newCode = generateOtpCode();
+    }
+    return newCode;
+  }
+
+  private async sendPasswordResetEmail(user: User, otpCode: string) {
+    const payload = new MailPayload();
+    payload.to = user.email;
+    payload.subject = 'Password reset';
+    payload.template = 'password-reset';
+    payload.props = {
+      username: user.first_name,
+      otpCode: otpCode,
+    };
+
+    await this.mail.sendEmail(payload);
   }
 }

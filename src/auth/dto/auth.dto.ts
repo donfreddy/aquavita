@@ -52,4 +52,13 @@ export class ResetPasswordDto {
   password: string;
 }
 
-
+export class CheckOtpDto {
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
+  @ApiProperty({
+    description: 'The otp code sent to the user',
+    example: '123456',
+  })
+  readonly otp_code: string;
+}

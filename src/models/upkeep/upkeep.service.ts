@@ -28,7 +28,7 @@ export class UpkeepService {
     if (inputs.observation) newUpkeep.observation = inputs.observation;
 
     return this.upkeepRepo
-      .save(inputs)
+      .save(newUpkeep)
       .then((entity) => this.getWhere('id', (entity as Upkeep).id))
       .catch((error) => Promise.reject(error));
   }

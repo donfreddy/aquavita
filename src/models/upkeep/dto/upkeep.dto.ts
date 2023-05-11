@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { EnumBreakdownStatus, EnumUpkeepStatus, EnumUpkeepType } from '../../../common/helpers';
+import { EnumUpkeepStatus, EnumUpkeepType } from '../../../common/helpers';
 
 export class CreateUpkeep {
   @IsEnum(EnumUpkeepType)
@@ -8,6 +8,7 @@ export class CreateUpkeep {
   @ApiProperty({
     description: 'Upkeep type',
     required: false,
+    isArray: true,
     default: EnumUpkeepType.FOUNTAIN,
     example: EnumUpkeepType.FOUNTAIN,
   })
@@ -53,7 +54,7 @@ export class CreateUpkeep {
 }
 
 export class UpdateUpkeep extends PartialType(CreateUpkeep) {
-  @IsEnum(EnumBreakdownStatus)
+  @IsEnum(EnumUpkeepStatus)
   @IsNotEmpty()
   @IsOptional()
   @ApiProperty({

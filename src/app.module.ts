@@ -33,6 +33,7 @@ import { CustomerModule } from './models/customer/customer.module';
 import { PermissionModule } from './permission/permission.module';
 import { DelivererActivityModule } from './models/deliverer-activity/deliverer-activity.module';
 import { UpkeepModule } from './models/upkeep/upkeep.module';
+import { InvoiceModule } from './models/invoice/invoice.module';
 
 @Module({
   imports: [
@@ -60,7 +61,8 @@ import { UpkeepModule } from './models/upkeep/upkeep.module';
     CustomerModule,
     DelivererActivityModule,
     PermissionModule,
-    UpkeepModule
+    UpkeepModule,
+    InvoiceModule
   ],
   controllers: [AppController],
   providers: [

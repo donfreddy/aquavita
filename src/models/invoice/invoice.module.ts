@@ -1,18 +1,19 @@
-import { UpkeepController } from './upkeep.controller';
+import { InvoiceController } from './invoice.controller';
 import { Module } from '@nestjs/common';
-import { UpkeepService } from './upkeep.service';
+import { InvoiceService } from './invoice.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Upkeep } from './entities/upkeep.entity';
+import { Invoice } from './entities/invoice.entity';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
 import { UserQuarterPlanning } from '../../common/entities/user-quarter-planning.entity';
 import { CustomerService } from '../customer/customer.service';
 import { Customer } from '../customer/entities/customer.entity';
 import { Company } from '../customer/entities/company.entity';
+import { DeliverySlip } from '../deliverer-activity/entities/delivery-slip.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Upkeep,Customer,Company,User,UserQuarterPlanning])],
-  controllers: [UpkeepController],
-  providers: [UpkeepService,UserService, CustomerService],
+  imports: [TypeOrmModule.forFeature([Invoice,DeliverySlip,Customer,Company,User,UserQuarterPlanning])],
+  controllers: [InvoiceController],
+  providers: [InvoiceService,UserService, CustomerService],
 })
-export class UpkeepModule {}
+export class InvoiceModule {}

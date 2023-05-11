@@ -105,3 +105,34 @@ export enum EnumUpkeepStatus {
   NOT_YET = 'Not yet',
 }
 
+export enum EnumInvoiceStatus {
+  PAID = 'Payé',
+  UNPAID = 'Non payé',
+}
+
+export enum EnumInvoiceType {
+  CONSUMPTION = 'Consommation',
+  CONTRACT = 'Contrat',
+}
+
+export enum EnumConsumptionType {
+  MONTHLY = 'Mensuelle',
+  EXPRESS = 'Express',
+}
+
+export enum EnumInvoiceMostOrHave {
+  MOST = 'doit',
+  HAVE = 'avoir',
+}
+
+
+export enum EnumPaymentMethod {
+  CASH = 'Cash',
+  CHEQUE = 'Cheque',
+  BANK_TRANSFER = 'Virement bancaire',
+}
+
+export enum EnumProductType {
+  CARBOYS = 'Bonbonnes',
+}
+

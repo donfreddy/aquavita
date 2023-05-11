@@ -4,6 +4,7 @@ import {
   DocumentBuilder,
   SwaggerCustomOptions,
 } from '@nestjs/swagger';
+import { configService } from './config/config.service';
 
 export function setupSwagger(app: INestApplication): void {
   const document = SwaggerModule.createDocument(
@@ -34,6 +35,8 @@ export function setupSwagger(app: INestApplication): void {
       .addTag('presences', 'Presences management')
       .addTag('customers', 'Customer management')
       .addTag('delivery slips', 'Delivery slips management')
+      .addTag('invoices', 'Invoices management')
+      .addServer(configService.getServer().url, configService.getServer().desc)
       .addBearerAuth()
       .build(),
   );
