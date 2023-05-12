@@ -16,11 +16,11 @@ export enum PermissionResourceTarget {
 }
 
 export enum PermissionRole {
+  SIMPLE_USER = 'SIMPLE_USER',
   VIGIL = 'VIGIL',
   WORKER = 'WORKER',
   TEAM_LEADER = 'LEADER',
   STORE_KEEPER = 'STORE_KEEPER',
-  DAF = 'DAF',
   SUPER_ADMIN = 'SUPER_ADMIN',
 }
 

@@ -1,10 +1,15 @@
 import { Exclude } from 'class-transformer';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+/**
+ * Entity Schema for Roles.
+ *
+ * @class
+ */
 @Entity({ name: 'roles' })
 export class Role {
-  @PrimaryGeneratedColumn()
   @Exclude()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ default: null })
@@ -12,4 +17,10 @@ export class Role {
 
   @Column({ default: null })
   description: string;
+
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  created_at: string;
 }

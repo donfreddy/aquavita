@@ -15,8 +15,6 @@ export function generateGlobalPermissions(role: PermissionRole): Permission[] {
       return [
         generatePermission(PermissionResource.ANY, PermissionAction.ANY, PermissionResourceTarget.ANY),
       ];
-    case PermissionRole.DAF:
-      return [];
     case PermissionRole.STORE_KEEPER:
       return [];
     case PermissionRole.TEAM_LEADER:
@@ -24,6 +22,8 @@ export function generateGlobalPermissions(role: PermissionRole): Permission[] {
     case PermissionRole.WORKER:
       return [];
     case PermissionRole.VIGIL:
+      return [];
+    case PermissionRole.SIMPLE_USER:
       return [];
     default:
       throw new BadRequestException(`Unsupported workspace role -${role}-`);

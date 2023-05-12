@@ -168,7 +168,7 @@ export class CreateCustomerDto {
   })
   is_blocked: boolean;
 
-  @IsBoolean()
+  @IsString()
   @IsOptional()
   @IsNotEmpty()
   @ApiProperty({

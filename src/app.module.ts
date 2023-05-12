@@ -12,7 +12,6 @@ import { TaskModule } from './models/task/task.module';
 import { AppController } from './app.controller';
 import { UserModule } from './models/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { PdfService } from './pdf/pdf.service';
 import { OtpModule } from './models/otp/otp.module';
 import { LocalFileService } from './models/local-file/local-file.service';
@@ -34,6 +33,7 @@ import { PermissionModule } from './permission/permission.module';
 import { DelivererActivityModule } from './models/deliverer-activity/deliverer-activity.module';
 import { UpkeepModule } from './models/upkeep/upkeep.module';
 import { InvoiceModule } from './models/invoice/invoice.module';
+import { MysqlDatabaseProviderModule } from './providers/database/mysql/provider.module';
 
 @Module({
   imports: [
@@ -52,7 +52,7 @@ import { InvoiceModule } from './models/invoice/invoice.module';
     BreakdownModule,
     PlanningModule,
     TaskModule,
-    TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+    MysqlDatabaseProviderModule,
     TypeOrmModule.forFeature([LocalFile]),
     QuarterTimeModule,
     PdfModule,
