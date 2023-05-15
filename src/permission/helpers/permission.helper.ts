@@ -16,15 +16,27 @@ export function generateGlobalPermissions(role: PermissionRole): Permission[] {
         generatePermission(PermissionResource.ANY, PermissionAction.ANY, PermissionResourceTarget.ANY),
       ];
     case PermissionRole.STORE_KEEPER:
-      return [];
+      return [
+        generatePermission(PermissionResource.AUTH, PermissionAction.ANY, PermissionResourceTarget.ANY),
+        generatePermission(PermissionResource.USERS, PermissionAction.GET, PermissionResourceTarget.ANY),
+      ];
     case PermissionRole.TEAM_LEADER:
-      return [];
+      return [
+        generatePermission(PermissionResource.AUTH, PermissionAction.ANY, PermissionResourceTarget.ANY),
+        generatePermission(PermissionResource.USERS, PermissionAction.GET, PermissionResourceTarget.ANY),
+      ];
     case PermissionRole.WORKER:
-      return [];
+      return [
+        generatePermission(PermissionResource.AUTH, PermissionAction.ANY, PermissionResourceTarget.ANY),
+      ];
     case PermissionRole.VIGIL:
-      return [];
+      return [
+        generatePermission(PermissionResource.AUTH, PermissionAction.ANY, PermissionResourceTarget.ANY),
+      ];
     case PermissionRole.SIMPLE_USER:
-      return [];
+      return [
+        generatePermission(PermissionResource.AUTH, PermissionAction.ANY, PermissionResourceTarget.ANY),
+      ];
     default:
       throw new BadRequestException(`Unsupported workspace role -${role}-`);
   }

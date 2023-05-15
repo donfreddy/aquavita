@@ -73,11 +73,11 @@ export class UserService {
   }
 
   async get(userId: string): Promise<User> {
-    return this.getWhere('id', userId, [ 'planning']);
+    return this.getWhere('id', userId, ['role', 'planning']);
   }
 
   async getProfile(user: User): Promise<User> {
-    return this.getWhere('id', user.id, ['planning']);
+    return this.getWhere('id', user.id, ['role','planning']);
   }
 
   async update(userId: string, inputs: DeepPartial<User>) {

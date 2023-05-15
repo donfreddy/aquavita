@@ -18,6 +18,7 @@ export class Role {
   @Column({ default: null })
   description: string;
 
+  @Exclude()
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',

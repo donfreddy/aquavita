@@ -35,7 +35,7 @@ export class AuthService {
 
   async login(inputs: LoginDto): Promise<any> {
     const { email, password } = inputs;
-    const foundUser = await this.user.getWhere('email', email);
+    const foundUser = await this.user.getWhere('email', email,['role']);
 
     if (!foundUser) {
       throw new UnauthorizedException('Incorrect email or password.');
