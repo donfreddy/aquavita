@@ -10,7 +10,7 @@ export class Customer extends AquavitaEntity {
   @Column()
   name: string;
 
-  @Column({ default: null })
+  @Column({ default: 0 })
   code: number;
 
   @Column({
