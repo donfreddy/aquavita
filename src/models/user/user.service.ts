@@ -6,24 +6,24 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserQuarterPlanning } from 'src/common/entities/user-quarter-planning.entity';
-import {
-  EnumEmployeeType,
-  hashPassword,
-} from 'src/common/helpers';
+import { EnumEmployeeType, hashPassword } from 'src/common/helpers';
 import { generatePassword } from 'src/common/helpers/generate-password';
 import { DeepPartial, Repository } from 'typeorm';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './entities/user.entity';
+import { PermissionRole } from 'src/permission/enum/permission.enum';
+import { Role } from '../role/role.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+    @InjectRepository(Role)
+    private readonly roleRepo: Repository<Role>,
     @InjectRepository(UserQuarterPlanning)
     private readonly userQuarterTimeRepo: Repository<UserQuarterPlanning>,
-  ) {
-  }
+  ) {}
 
   async create(inputs: CreateUserDto, hasPassword = true): Promise<any> {
     //check if the user is an employee
@@ -32,16 +32,15 @@ export class UserService {
       throw new BadRequestException('User already exists with this email.');
     }
 
-    console.log(inputs);
-    console.log(hasPassword);
-
     const userPassword = hasPassword ? inputs.password : generatePassword();
     console.log(userPassword);
     console.log(generatePassword());
     const hashedPassword = await hashPassword(userPassword);
 
     // set user role
-    // const roles = [Role.User];
+    const userRole = await this.getUserRole(
+      inputs.role ? inputs.role : PermissionRole.SIMPLE_USER,
+    );
 
     try {
       const newUser = new User();
@@ -52,6 +51,7 @@ export class UserService {
       newUser.phone = inputs.phone;
       newUser.employee_type = inputs.employee_type;
       newUser.city = inputs.city;
+      newUser.role = userRole;
       newUser.neighborhood = inputs.neighborhood;
       newUser.job = inputs.job;
       newUser.hiring_date = new Date(inputs.hiring_date);
@@ -77,18 +77,18 @@ export class UserService {
   }
 
   async getProfile(user: User): Promise<User> {
-    return this.getWhere('id', user.id, ['role','planning']);
+    return this.getWhere('id', user.id, ['role', 'planning']);
   }
 
-  async update(userId: string, inputs: DeepPartial<User>) {
+  async update(userId: string, inputs: UpdateUserDto) {
     const foundUser = await this.getWhere('id', userId);
-    await this.userRepo.update(foundUser.id, inputs);
-    return { updated: true };
-  }
 
-  async updateProfile(user: User, inputs: DeepPartial<User>) {
-    const foundUser = await this.getWhere('id', user.id);
-    await this.userRepo.update(foundUser.id, inputs);
+    if (inputs.role) {
+      const userRole = await this.getUserRole(inputs.role);
+      if (userRole) foundUser.role = userRole;
+    }
+
+    await this.userRepo.save(foundUser);
     return { updated: true };
   }
 
@@ -96,6 +96,10 @@ export class UserService {
     const foundUser = await this.getWhere('id', userId);
     await this.userRepo.softDelete(foundUser.id);
     return { deleted: true };
+  }
+
+  private async getUserRole(label: PermissionRole) {
+    return this.roleRepo.findOne({ where: { label } });
   }
 
   async getWhere(

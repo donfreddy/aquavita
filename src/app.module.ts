@@ -34,6 +34,7 @@ import { DelivererActivityModule } from './models/deliverer-activity/deliverer-a
 import { UpkeepModule } from './models/upkeep/upkeep.module';
 import { InvoiceModule } from './models/invoice/invoice.module';
 import { MysqlDatabaseProviderModule } from './providers/database/mysql/provider.module';
+import { ContractModule } from './models/contract/contract.module';
 
 @Module({
   imports: [
@@ -62,7 +63,8 @@ import { MysqlDatabaseProviderModule } from './providers/database/mysql/provider
     DelivererActivityModule,
     PermissionModule,
     UpkeepModule,
-    InvoiceModule
+    InvoiceModule,
+    ContractModule
   ],
   controllers: [AppController],
   providers: [

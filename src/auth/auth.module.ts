@@ -15,10 +15,11 @@ import { QuarterTimeService } from '../models/quater-time/quarter-time.service';
 import { QuarterTime } from '../models/quater-time/entities/quarter-time.entity';
 import { UserQuarterPlanning } from '../common/entities/user-quarter-planning.entity';
 import { QuarterPlanning } from '../common/entities/quarter-planning.entity';
+import { Role } from '../models/role/role.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Otp,QuarterTime,UserQuarterPlanning,User,QuarterPlanning]),
+    TypeOrmModule.forFeature([User, Otp,QuarterTime,UserQuarterPlanning,User,QuarterPlanning,Role]),
     PassportModule,
     JwtModule.register({
       secret: configService.getJWT().secretKey,

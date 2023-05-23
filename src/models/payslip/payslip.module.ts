@@ -6,9 +6,10 @@ import { UserQuarterPlanning } from '../../common/entities/user-quarter-planning
 import { PayslipController } from './payslip.controller';
 import { PayslipService } from './payslip.service';
 import { Payslip } from './entities/payslip.entity';
+import { Role } from '../role/role.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Payslip, UserQuarterPlanning])],
+  imports: [TypeOrmModule.forFeature([User, Payslip, UserQuarterPlanning,Role])],
   controllers: [PayslipController],
   providers: [PayslipService, UserService],
 })

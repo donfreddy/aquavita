@@ -1,10 +1,5 @@
 import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from 'src/models/user/entities/user.entity';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
@@ -19,8 +14,7 @@ import { UserService } from './user.service';
 @ApiTags('profile')
 @Controller('profile')
 export class ProfileController {
-  constructor(private readonly user: UserService) {
-  }
+  constructor(private readonly user: UserService) {}
 
   @Get()
   @ApiResponse('Success')
@@ -37,6 +31,6 @@ export class ProfileController {
     @GetUser() currentUser: User,
     @Body() inputs: UpdateUserDto,
   ): Promise<any> {
-    return await this.user.updateProfile(currentUser, inputs);
+    return await this.user.update(currentUser.id, inputs);
   }
 }

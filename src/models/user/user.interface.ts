@@ -1,3 +1,4 @@
+import { PermissionRole } from 'src/permission/enum/permission.enum';
 import { EnumEmployeeType, EnumGender } from '../../common/helpers';
 
 export interface IUser {
@@ -12,5 +13,5 @@ export interface IUser {
   job: string;
   employee_type: EnumEmployeeType;
   gender: EnumGender;
-  role: string;
+  role: PermissionRole;
 }

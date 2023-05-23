@@ -136,3 +136,9 @@ export enum EnumProductType {
   CARBOYS = 'Bonbonnes',
 }
 
+export enum EnumInvoicingProfile {
+  CONTRACT = 'Contract',
+  CARBOYS = 'Bonbonnes',
+  ENDOWMENT = 'Dotation',
+}
+

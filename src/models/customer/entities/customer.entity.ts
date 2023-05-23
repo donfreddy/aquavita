@@ -1,9 +1,10 @@
-import { Entity, Column, OneToMany, JoinColumn, OneToOne, Generated } from 'typeorm';
+import { Entity, Column, OneToMany, JoinColumn, OneToOne } from 'typeorm';
 import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
 import { EnumCustomerType } from '../../../common/helpers';
 import { DeliverySlip } from '../../deliverer-activity/entities/delivery-slip.entity';
 import { Company } from './company.entity';
 import { Invoice } from '../../invoice/entities/invoice.entity';
+import { Contract } from '../../contract/entities/contract.entity';
 
 @Entity('customers')
 export class Customer extends AquavitaEntity {
@@ -72,6 +73,10 @@ export class Customer extends AquavitaEntity {
 
   @Column({ nullable: true })
   blocking_last_update: Date;
+
+  @OneToOne(() => Contract, contract => contract.customer, { eager: true })
+  @JoinColumn()
+  contract: Contract;
 
   @OneToOne(() => Company, company => company.customer, { eager: true })
   @JoinColumn()

@@ -3,14 +3,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Purchase } from './entities/purchase.entity';
 import { PurchaseService } from './purchase.service';
-import { User } from '../user/entities/user.entity';
-import { UserQuarterPlanning } from '../../common/entities/user-quarter-planning.entity';
-import { UserService } from '../user/user.service';
+import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Purchase, User, UserQuarterPlanning])],
+  imports: [UserModule,TypeOrmModule.forFeature([Purchase,])],
   controllers: [PurchaseController],
-  providers: [PurchaseService, UserService],
+  providers: [PurchaseService],
 })
 export class PurchaseModule {
 }

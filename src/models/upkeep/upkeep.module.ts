@@ -9,9 +9,10 @@ import { UserQuarterPlanning } from '../../common/entities/user-quarter-planning
 import { CustomerService } from '../customer/customer.service';
 import { Customer } from '../customer/entities/customer.entity';
 import { Company } from '../customer/entities/company.entity';
+import { Role } from '../role/role.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Upkeep,Customer,Company,User,UserQuarterPlanning])],
+  imports: [TypeOrmModule.forFeature([Upkeep,Customer,Company,User,UserQuarterPlanning,Role])],
   controllers: [UpkeepController],
   providers: [UpkeepService,UserService, CustomerService],
 })

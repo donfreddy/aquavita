@@ -9,9 +9,10 @@ import { UserQuarterPlanning } from '../../common/entities/user-quarter-planning
 import { QuarterTimeService } from '../quater-time/quarter-time.service';
 import { QuarterTime } from '../quater-time/entities/quarter-time.entity';
 import { QuarterPlanning } from '../../common/entities/quarter-planning.entity';
+import { Role } from '../role/role.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Task,User,UserQuarterPlanning,QuarterTime,QuarterPlanning])],
+  imports: [TypeOrmModule.forFeature([Task,User,UserQuarterPlanning,QuarterTime,QuarterPlanning,Role])],
   controllers: [TaskController],
   providers: [TaskService, UserService, QuarterTimeService],
 })

@@ -6,9 +6,10 @@ import { UserService } from '../user/user.service';
 import { MaterialController } from './material.controller';
 import { MaterialService } from './material.service';
 import { Material } from './entities/material.entity';
+import { Role } from '../role/role.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Material, UserQuarterPlanning])],
+  imports: [TypeOrmModule.forFeature([User, Material, UserQuarterPlanning,Role])],
   controllers: [MaterialController],
   providers: [MaterialService, UserService],
 })

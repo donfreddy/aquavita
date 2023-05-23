@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { PermissionRole } from 'src/permission/enum/permission.enum';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 /**
@@ -12,8 +13,12 @@ export class Role {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: null })
-  label: string;
+  @Column({
+    type: 'enum',
+    enum: PermissionRole,
+    default: PermissionRole.SIMPLE_USER,
+  })
+  label: PermissionRole;
 
   @Column({ default: null })
   description: string;

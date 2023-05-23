@@ -1,9 +1,11 @@
+import { PermissionRole } from "src/permission/enum/permission.enum";
+
 /**
  * Role variable type declaration.
  *
  * @interface
  */
 export interface IRole {
-  label: string;
+  label: PermissionRole;
   description?: string;
 }

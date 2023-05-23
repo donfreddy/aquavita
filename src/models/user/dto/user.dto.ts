@@ -8,6 +8,7 @@ import {
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { EnumEmployeeType } from '../../../common/helpers';
+import { PermissionRole } from '../../../permission/enum/permission.enum';
 
 export class CreateUserDto {
   @IsString()
@@ -45,6 +46,17 @@ export class CreateUserDto {
   @ApiProperty({ type: 'string', example: 'Manutentionnaire', required: false })
   job: string;
 
+  @IsEnum(PermissionRole)
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Set user role',
+    required: false,
+    default: PermissionRole.SIMPLE_USER,
+    example: PermissionRole.SIMPLE_USER,
+  })
+  role: PermissionRole;
+
   @IsString()
   @IsNotEmpty()
   @IsOptional()
@@ -55,7 +67,6 @@ export class CreateUserDto {
   })
   hiring_date: string;
 
-  // add employee type
   @IsEnum(EnumEmployeeType)
   @IsNotEmpty()
   @ApiProperty({

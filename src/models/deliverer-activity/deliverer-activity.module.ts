@@ -14,9 +14,10 @@ import { DelivererActivityController } from './deliverer-activity.controller';
 import { DeliverySlip } from './entities/delivery-slip.entity';
 import { PurchaseOrder } from '../purchase-order/entities/purchase-order.entity';
 import { Company } from '../customer/entities/company.entity';
+import { Role } from '../role/role.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Customer,Company, DeliverySlip,PurchaseOrder, DelivererActivity, UserQuarterPlanning, LocalFile])],
+  imports: [TypeOrmModule.forFeature([User, Customer,Company, DeliverySlip,PurchaseOrder, DelivererActivity, UserQuarterPlanning, LocalFile,Role])],
   controllers: [DelivererActivityController],
   providers: [DelivererActivityService, UserService, CustomerService, PurchaseOrderService, LocalFileService],
 })
