@@ -1,29 +1,28 @@
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
-import { Customer } from '../../customer/entities/customer.entity';
 import { EnumDeliverySlipStatus } from '../../../common/helpers';
 import { DelivererActivity } from './deliverer-activity.entity';
-import { Invoice } from '../../invoice/entities/invoice.entity';
+import { DeliverySite } from '../../delivery-site/entities/delivery-site.entity';
 
 @Entity('delivery_slips')
 export class DeliverySlip extends AquavitaEntity {
-  @Column()
-  type: string;
+  @Column({ nullable: true })
+  stock: string;
 
-  @Column()
-  contract: string;
+  @Column({ default: 0 })
+  contract: number;
 
-  @Column()
-  delivery_address: string;
+  @Column({ default: 0 })
+  carboys_delivered: number;
 
-  @Column()
-  carboys_delivered: string;
+  @Column({ default: false })
+  is_unanticipated: boolean;
 
-  @Column({ default: '0' })
-  carboys_recovered_in_state: string;
+  @Column({ default: 0 })
+  carboys_recovered_in_state: number;
 
-  @Column({ default: '0' })
-  carboys_recovered_in_broken: string;
+  @Column({ default: 0 })
+  carboys_recovered_in_broken: number;
 
   @Column({
     type: 'enum',
@@ -32,17 +31,14 @@ export class DeliverySlip extends AquavitaEntity {
   })
   status: EnumDeliverySlipStatus;
 
-  @Column()
+  @Column({ nullable: true })
   observation: string;
 
-  @ManyToOne(() => Customer, { eager: true })
-  customer: Customer;
+  @ManyToOne(() => DeliverySite, { eager: true })
+  @JoinColumn()
+  deliverySite: DeliverySite;
 
-  @ManyToOne(() => Invoice, (invoice) => invoice.delivery_slips)
-  @JoinColumn({ name: 'invoice_id' })
-  invoice: Invoice;
-
-  @ManyToOne(() => DelivererActivity, (delivererActivity) => delivererActivity.delivery_slips)
-  @JoinColumn({ name: 'deliverer_activity_id' })
-  deliverer_activity: DelivererActivity;
+  // @ManyToOne(() => DelivererActivity, (delivererActivity) => delivererActivity.delivery_sites)
+  // @JoinColumn({ name: 'deliverer_activity_id' })
+  // deliverer_activity: DelivererActivity;
 }

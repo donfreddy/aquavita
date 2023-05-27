@@ -32,6 +32,14 @@ export class CustomerController {
     return await this.customer.getAll();
   }
 
+
+  @Get('/sold')
+  @ApiResponse()
+  @ApiOperation({ summary: 'Get customers sold.' })
+  async getCustomersSold(): Promise<any> {
+    return await this.customer.getAllSold();
+  }
+
   @Get(':id')
   @ApiResponse()
   @ApiParam({ name: 'id', description: 'The customer id' })
@@ -62,5 +70,25 @@ export class CustomerController {
     @Param('id') customerId: string,
   ): Promise<any> {
     return await this.customer.delete(customerId);
+  }
+
+  @Get('/:id/delivery-sites')
+  @ApiResponse()
+  @ApiParam({ name: 'id', description: 'The customer delivery sites' })
+  @ApiOperation({ summary: 'Get customer delivery sites.' })
+  async getCustomerDeliverySites(
+    @Param('id') customerId: string,
+  ): Promise<any> {
+    return await this.customer.getDeliverySites(customerId);
+  }
+
+  @Get('/:id/sold')
+  @ApiResponse()
+  @ApiParam({ name: 'id', description: 'The customer sold' })
+  @ApiOperation({ summary: 'Get customer sold.' })
+  async getCustomerSold(
+    @Param('id') customerId: string,
+  ): Promise<any> {
+    return await this.customer.getSold(customerId);
   }
 }

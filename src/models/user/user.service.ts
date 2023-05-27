@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserQuarterPlanning } from 'src/common/entities/user-quarter-planning.entity';
 import { EnumEmployeeType, hashPassword } from 'src/common/helpers';
 import { generatePassword } from 'src/common/helpers/generate-password';
-import { DeepPartial, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './entities/user.entity';
 import { PermissionRole } from 'src/permission/enum/permission.enum';

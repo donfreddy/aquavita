@@ -37,6 +37,7 @@ export function setupSwagger(app: INestApplication): void {
       .addTag('delivery slips', 'Delivery slips management')
       .addTag('invoices', 'Invoices management')
       .addServer(configService.getServer().url, configService.getServer().desc)
+      .addServer('http://192.168.100.164:3000', configService.getServer().desc)
       .addBearerAuth()
       .build(),
   );

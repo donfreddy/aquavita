@@ -1,21 +1,25 @@
-import { Entity, Column, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, ManyToMany, JoinTable, OneToOne, JoinColumn } from 'typeorm';
 import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
 import { User } from '../../user/entities/user.entity';
-import { DeliverySlip } from './delivery-slip.entity';
+import { DeliveryRound } from './delivery-round.entity';
+import { DeliverySite } from '../../delivery-site/entities/delivery-site.entity';
 
 @Entity('delivery_activities')
 export class DelivererActivity extends AquavitaEntity {
   @Column()
   imma_vehicle: string;
 
+  @Column({ unique: true, nullable: true })
+  code: string;
+
   @Column()
   delivery_date: Date;
 
-  @Column()
-  exit_time: Date;
+  @Column({ nullable: true })
+  exit_time: string;
 
-  @Column()
-  return_time: Date;
+  @Column({ nullable: true })
+  return_time: string;
 
   @ManyToMany(() => User, { eager: true })
   @JoinTable()
@@ -24,24 +28,12 @@ export class DelivererActivity extends AquavitaEntity {
   @ManyToOne(() => User, { eager: true })
   driver: User;
 
-  @Column({ nullable: true })
-  turns1_nb_customers_delivered: string;
+  @OneToMany(() => DeliveryRound, deliveryRound => deliveryRound.deliverer_activity)
+  delivery_round: DeliveryRound;
 
-  @Column({ nullable: true })
-  turns1_nb_unexpected_customers: string;
+  // @OneToMany(() => DeliverySlip, deliverySlip => deliverySlip.deliverer_activity)
+  // delivery_slips: DeliverySlip[];
 
-  @Column({ nullable: true })
-  turns1_nb_carboys_delivered: string;
-
-  @Column({ nullable: true })
-  turns2_nb_customers_delivered: string;
-
-  @Column({ nullable: true })
-  turns2_nb_unexpected_customers: string;
-
-  @Column({ nullable: true })
-  turns2_nb_carboys_delivered: string;
-
-  @OneToMany(() => DeliverySlip, deliverySlip => deliverySlip.deliverer_activity)
-  delivery_slips: DeliverySlip[];
+  @OneToMany(() => DeliverySite, deliverySite => deliverySite.deliverer_activity)
+  delivery_sites: DeliverySite[];
 }

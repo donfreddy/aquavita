@@ -1,18 +1,20 @@
 import { Entity, Column, OneToMany, JoinColumn, OneToOne } from 'typeorm';
 import { AquavitaEntity } from '../../../common/entities/aquavita.entity';
 import { EnumCustomerType } from '../../../common/helpers';
-import { DeliverySlip } from '../../deliverer-activity/entities/delivery-slip.entity';
 import { Company } from './company.entity';
 import { Invoice } from '../../invoice/entities/invoice.entity';
 import { Contract } from '../../contract/entities/contract.entity';
+import { DeliverySite } from '../../delivery-site/entities/delivery-site.entity';
+import { Contact } from './contact.entity';
+import { Address } from './address.entity';
 
 @Entity('customers')
 export class Customer extends AquavitaEntity {
   @Column()
   name: string;
 
-  @Column({ default: 0 })
-  code: number;
+  @Column({ unique: true })
+  code: string;
 
   @Column({
     type: 'enum',
@@ -20,47 +22,14 @@ export class Customer extends AquavitaEntity {
   })
   type: EnumCustomerType;
 
-  @Column({ nullable: true })
-  complement: string;
-
-  @Column({ nullable: true })
-  address: string;
-
-  @Column({ default: 'Douala' })
-  city: string;
-
-  @Column({ nullable: true })
-  zone: string;
-
-  @Column({ nullable: true })
-  postcode: string;
-
-  @Column({ nullable: true })
-  phone: string;
-
-  @Column({ nullable: true })
-  fax: string;
-
-  @Column({ nullable: true })
-  email: string;
-
-  @Column({ nullable: true })
-  website: string;
-
-  @Column({ default: 0 })
-  fountains_count: number;
-
-  @Column({ nullable: true })
-  accounting_general_account: string;
-
-  @Column({ nullable: true })
-  accounting_third_party_account: string;
-
-  @Column({ default: false })
-  has_tva: boolean;
+  @Column()
+  typology: string;
 
   @Column({ default: false })
   is_blocked: boolean;
+
+  @Column({ default: false })
+  has_contract: boolean;
 
   @Column({ nullable: true })
   blocking_reason: string;
@@ -69,10 +38,10 @@ export class Customer extends AquavitaEntity {
   blocking_date: Date;
 
   @Column({ nullable: true })
-  blocking_employee: string;
+  unblocking_date: Date;
 
   @Column({ nullable: true })
-  blocking_last_update: Date;
+  blocking_employee: string;
 
   @OneToOne(() => Contract, contract => contract.customer, { eager: true })
   @JoinColumn()
@@ -82,9 +51,17 @@ export class Customer extends AquavitaEntity {
   @JoinColumn()
   company: Company;
 
-  @OneToMany(() => DeliverySlip, (delivery_slip) => delivery_slip.customer)
-  delivery_slips: DeliverySlip[];
+  @OneToOne(() => Contact, contact => contact.customer, { eager: true })
+  @JoinColumn()
+  contact: Contact;
+
+  @OneToOne(() => Address, address => address.customer, { eager: true })
+  @JoinColumn()
+  address: Address;
 
   @OneToMany(() => Invoice, (invoice) => invoice.customer)
   invoices: Invoice[];
+
+  @OneToMany(() => DeliverySite, (deliverySite) => deliverySite.customer)
+  delivery_sites: DeliverySite[];
 }

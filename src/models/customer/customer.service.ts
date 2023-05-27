@@ -4,6 +4,11 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
 import { Company } from './entities/company.entity';
+import { WorkSchedule } from './entities/work-schedule.entity';
+import { Address } from './entities/address.entity';
+import { Contact } from './entities/contact.entity';
+import { getUniqueCode } from '../../common/helpers';
+import { Invoice } from '../invoice/entities/invoice.entity';
 
 @Injectable()
 export class CustomerService {
@@ -12,47 +17,77 @@ export class CustomerService {
     private readonly customerRepo: Repository<Customer>,
     @InjectRepository(Company)
     private readonly companyRepo: Repository<Company>,
+    @InjectRepository(Address)
+    private readonly addressRepo: Repository<Address>,
+    @InjectRepository(Contact)
+    private readonly contactRepo: Repository<Contact>,
+    @InjectRepository(WorkSchedule)
+    private readonly workScheduleRepo: Repository<WorkSchedule>,
+    @InjectRepository(Invoice)
+    private readonly invoiceRepo: Repository<Invoice>,
   ) {
   }
 
   async create(inputs: CreateCustomerDto) {
-    const { company, ...customer } = inputs;
+    const { company, contact, address, ...customer } = inputs;
+    let newCompany = null;
 
     // create company
-    const newCompany = new Company();
-    if (company.year_of_creation) newCompany.year_of_creation = company.year_of_creation;
-    if (company.effective) newCompany.effective = company.effective;
-    if (company.responsible) newCompany.responsible = company.responsible;
-    if (company.activity) newCompany.activity = company.activity;
-    if (company.taxpayer_number) newCompany.taxpayer_number = company.taxpayer_number;
-    if (company.trade_register_number) newCompany.trade_register_number = company.trade_register_number;
-    if (company.opening_time) newCompany.opening_time = new Date(company.opening_time);
-    if (company.pause_time_start) newCompany.pause_time_start = new Date(company.pause_time_start);
-    if (company.pause_time_end) newCompany.pause_time_end = new Date(company.pause_time_end);
-    if (company.closing_time) newCompany.closing_time = new Date(company.closing_time);
-    await this.companyRepo.save(newCompany);
+    if (company) {
+      const { work_schedule } = company;
+      // Create company work schedule
+      const newWorkSchedule = new WorkSchedule();
+      if (work_schedule.opening_time) newWorkSchedule.opening_time = work_schedule.opening_time;
+      if (work_schedule.pause_time_start) newWorkSchedule.pause_time_start = work_schedule.pause_time_start;
+      if (work_schedule.pause_time_end) newWorkSchedule.pause_time_end = work_schedule.pause_time_end;
+      if (work_schedule.closing_time) newWorkSchedule.closing_time = work_schedule.closing_time;
+      await this.workScheduleRepo.save(newWorkSchedule);
+
+      newCompany = new Company();
+      if (company.year_of_creation) newCompany.year_of_creation = company.year_of_creation;
+      if (company.effective) newCompany.effective = company.effective;
+      if (company.responsible) newCompany.responsible = company.responsible;
+      if (company.activity) newCompany.activity = company.activity;
+      if (company.taxpayer_number) newCompany.taxpayer_number = company.taxpayer_number;
+      if (company.trade_register_number) newCompany.trade_register_number = company.trade_register_number;
+      if (company.work_schedule) newCompany.work_schedule = newWorkSchedule;
+      if (company.accounting_third_party_account) newCompany.accounting_third_party_account = company.accounting_third_party_account;
+      if (company.has_tva) newCompany.has_tva = company.has_tva;
+      await this.companyRepo.save(newCompany);
+    }
+
+
+    // Create address
+    const newAddress = new Address();
+    newAddress.address = address.address;
+    if (address.city) newAddress.city = address.city;
+    if (address.zone) newAddress.zone = address.zone;
+    if (address.postcode) newAddress.postcode = address.postcode;
+    await this.addressRepo.save(newAddress);
+
+    // Create contact
+    const newContact = new Contact();
+    newContact.phone = contact.phone;
+    if (contact.email) newContact.email = contact.email;
+    if (contact.fax) newContact.fax = contact.fax;
+    if (contact.website) newContact.website = contact.website;
+    await this.contactRepo.save(newContact);
+
+    // Generate code
+    let newCode = getUniqueCode('CLT');
+    // make sur it's unique on database
+    while ((await this.getWhere('code', newCode, [], false)) != undefined) {
+      newCode = getUniqueCode('CLT');
+    }
 
     // create customer
     const newCustomer = new Customer();
+    newCustomer.code = newCode;
     newCustomer.name = customer.name;
     newCustomer.type = customer.type;
-    newCustomer.address = customer.address;
-    newCustomer.zone = customer.zone;
-    if (customer.complement) newCustomer.complement = customer.complement;
-    if (customer.postcode) newCustomer.postcode = customer.postcode;
-    if (customer.city) newCustomer.city = customer.city;
-    if (customer.phone) newCustomer.city = customer.phone;
-    if (customer.fax) newCustomer.fax = customer.fax;
-    if (customer.email) newCustomer.email = customer.email;
-    if (customer.website) newCustomer.website = customer.website;
-    if (customer.fountains_count) newCustomer.fountains_count = customer.fountains_count;
-    if (customer.accounting_third_party_account) newCustomer.accounting_third_party_account = customer.accounting_third_party_account;
-    if (customer.has_tva) newCustomer.has_tva = customer.has_tva;
-    if (customer.is_blocked) newCustomer.is_blocked = customer.is_blocked;
-    if (customer.blocking_reason) newCustomer.blocking_reason = customer.blocking_reason;
-    if (customer.blocking_date) newCustomer.blocking_date = new Date(customer.blocking_date);
-    if (customer.blocking_employee) newCustomer.blocking_employee = customer.blocking_employee;
-    if (customer.blocking_last_update) newCustomer.blocking_last_update = new Date(customer.blocking_last_update);
+    newCustomer.typology = customer.typology;
+    newCustomer.contact = newContact;
+    newCustomer.address = newAddress;
     newCustomer.company = newCompany;
 
     return this.customerRepo
@@ -62,13 +97,16 @@ export class CustomerService {
   }
 
   async getAll() {
-    return this.customerRepo.find({
-      order: { name: 'DESC' },
-    });
+    return this.customerRepo.find();
   }
 
   async get(customerId: string) {
-    return this.getWhere('id', customerId, ['delivery_slips', 'invoices']);
+    return this.getWhere('id', customerId, ['invoices', 'delivery_sites']);
+  }
+
+  async getDeliverySites(customerId: string) {
+    const customer = await this.get(customerId);
+    return customer.delivery_sites;
   }
 
   async update(customerId: string, inputs: UpdateCustomerDto) {
@@ -85,33 +123,29 @@ export class CustomerService {
       if (company.activity) foundCompany.activity = company.activity;
       if (company.taxpayer_number) foundCompany.taxpayer_number = company.taxpayer_number;
       if (company.trade_register_number) foundCompany.trade_register_number = company.trade_register_number;
-      if (company.opening_time) foundCompany.opening_time = new Date(company.opening_time);
-      if (company.pause_time_start) foundCompany.pause_time_start = new Date(company.pause_time_start);
-      if (company.pause_time_end) foundCompany.pause_time_end = new Date(company.pause_time_end);
-      if (company.closing_time) foundCompany.closing_time = new Date(company.closing_time);
       await this.companyRepo.save(foundCompany);
     }
 
     // update customer
-    if (inputs.name) foundCustomer.name = inputs.name;
-    if (inputs.type) foundCustomer.type = inputs.type;
-    if (inputs.address) foundCustomer.address = inputs.address;
-    if (inputs.zone) foundCustomer.zone = inputs.zone;
-    if (inputs.complement) foundCustomer.complement = inputs.complement;
-    if (inputs.postcode) foundCustomer.postcode = inputs.postcode;
-    if (inputs.city) foundCustomer.city = inputs.city;
-    if (inputs.phone) foundCustomer.city = inputs.phone;
-    if (inputs.fax) foundCustomer.fax = inputs.fax;
-    if (inputs.email) foundCustomer.email = inputs.email;
-    if (inputs.website) foundCustomer.website = inputs.website;
-    if (inputs.fountains_count) foundCustomer.fountains_count = inputs.fountains_count;
-    if (inputs.accounting_third_party_account) inputs.accounting_third_party_account = foundCustomer.accounting_third_party_account;
-    if (inputs.has_tva) foundCustomer.has_tva = inputs.has_tva;
-    if (inputs.is_blocked) foundCustomer.is_blocked = inputs.is_blocked;
-    if (inputs.blocking_reason) foundCustomer.blocking_reason = inputs.blocking_reason;
-    if (inputs.blocking_date) foundCustomer.blocking_date = new Date(inputs.blocking_date);
-    if (inputs.blocking_employee) foundCustomer.blocking_employee = inputs.blocking_employee;
-    if (inputs.blocking_last_update) foundCustomer.blocking_last_update = new Date(foundCustomer.blocking_last_update);
+    // if (inputs.name) foundCustomer.name = inputs.name;
+    // if (inputs.type) foundCustomer.type = inputs.type;
+    // if (inputs.address) foundCustomer.address = inputs.address;
+    // if (inputs.zone) foundCustomer.zone = inputs.zone;
+    // if (inputs.complement) foundCustomer.complement = inputs.complement;
+    // if (inputs.postcode) foundCustomer.postcode = inputs.postcode;
+    // if (inputs.city) foundCustomer.city = inputs.city;
+    // if (inputs.phone) foundCustomer.city = inputs.phone;
+    // if (inputs.fax) foundCustomer.fax = inputs.fax;
+    // if (inputs.email) foundCustomer.email = inputs.email;
+    // if (inputs.website) foundCustomer.website = inputs.website;
+    // if (inputs.fountains_count) foundCustomer.fountains_count = inputs.fountains_count;
+    // if (inputs.accounting_third_party_account) inputs.accounting_third_party_account = foundCustomer.accounting_third_party_account;
+    // if (inputs.has_tva) foundCustomer.has_tva = inputs.has_tva;
+    // if (inputs.is_blocked) foundCustomer.is_blocked = inputs.is_blocked;
+    // if (inputs.blocking_reason) foundCustomer.blocking_reason = inputs.blocking_reason;
+    // if (inputs.blocking_date) foundCustomer.blocking_date = new Date(inputs.blocking_date);
+    // if (inputs.blocking_employee) foundCustomer.blocking_employee = inputs.blocking_employee;
+    // if (inputs.blocking_last_update) foundCustomer.blocking_last_update = new Date(foundCustomer.blocking_last_update);
     if (inputs.company) foundCustomer.company = foundCompany;
 
     await this.customerRepo.save(foundCustomer);
@@ -122,6 +156,27 @@ export class CustomerService {
     const foundCustomer = await this.getWhere('id', customerId);
     foundCustomer.deleted_at = new Date();
     await this.customerRepo.save(foundCustomer);
+    return { deleted: true };
+  }
+
+  async save(customer: Customer) {
+    return await this.customerRepo.save(customer);
+  }
+
+  // calculate sold
+  async getAllSold() {
+    // const invoices: Invoice[] = [];
+    const customers = await this.customerRepo.find();
+
+    console.log(customers);
+
+    return { deleted: true };
+  }
+
+  async getSold(customerId: string) {
+    //  const invoices: Invoice[] = [];
+    const foundCustomer = await this.getWhere('id', customerId, ['invoices']);
+    console.log(foundCustomer);
     return { deleted: true };
   }
 

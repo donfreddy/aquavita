@@ -35,6 +35,7 @@ import { UpkeepModule } from './models/upkeep/upkeep.module';
 import { InvoiceModule } from './models/invoice/invoice.module';
 import { MysqlDatabaseProviderModule } from './providers/database/mysql/provider.module';
 import { ContractModule } from './models/contract/contract.module';
+import { DeliverySiteModule } from './models/delivery-site/delivery-site.module';
 
 @Module({
   imports: [
@@ -64,7 +65,8 @@ import { ContractModule } from './models/contract/contract.module';
     PermissionModule,
     UpkeepModule,
     InvoiceModule,
-    ContractModule
+    ContractModule,
+    DeliverySiteModule
   ],
   controllers: [AppController],
   providers: [

@@ -8,6 +8,9 @@ import { DelivererActivity } from './entities/deliverer-activity.entity';
 import { User } from '../user/entities/user.entity';
 import { CreateDeliverySlipDto, UpdateDeliverySlipDto } from './dto/delivery-slip.dto';
 import { DeliverySlip } from './entities/delivery-slip.entity';
+import { DeliveryRound } from './entities/delivery-round.entity';
+import { DeliverySiteService } from '../delivery-site/delivery-site.service';
+import { getUniqueCode } from '../../common/helpers';
 
 @Injectable()
 export class DelivererActivityService {
@@ -16,32 +19,44 @@ export class DelivererActivityService {
     private readonly delivererActivityRepo: Repository<DelivererActivity>,
     @InjectRepository(DeliverySlip)
     private readonly deliverySlipRepo: Repository<DeliverySlip>,
+    @InjectRepository(DeliveryRound)
+    private readonly deliveryRoundRepo: Repository<DeliveryRound>,
     private readonly user: UserService,
     private readonly customer: CustomerService,
+    private readonly deliverySite: DeliverySiteService,
   ) {
   }
 
   async create(inputs: CreateDelivererActivityDto) {
-    const newDelivererActivity = new DelivererActivity();
-    const deliverers: User[] = [];
+    const promises = inputs.delivery_site_ids.map(async (deliverySiteId) => {
+      const deliverySite = await this.deliverySite.getWhere('id', deliverySiteId);
+      if (deliverySite) {
+        return deliverySite;
+      }
+    });
+    const deliverySites = await Promise.all(promises.filter(Boolean));
 
-    await Promise.all(inputs.deliverer_ids.map(async (delivererId) => {
+    // Generate code
+    let newCode = getUniqueCode('FIL');
+    // make sur it's unique on database
+    while ((await this.getWhere('code', newCode, [], false)) != undefined) {
+      newCode = getUniqueCode('FIL');
+    }
+
+    const newDelivererActivity = new DelivererActivity();
+    const promises2 = inputs.deliverer_ids.map(async (delivererId) => {
       const deliverer = await this.user.getWhere('id', delivererId);
-      if (deliverer) deliverers.push(deliverer);
-    }));
-    newDelivererActivity.deliverers = deliverers;
+      if (deliverer) {
+        return deliverer;
+      }
+    });
+    newDelivererActivity.deliverers = await Promise.all(promises2.filter(Boolean));
     newDelivererActivity.imma_vehicle = inputs.imma_vehicle;
+    newDelivererActivity.code = newCode;
     const driver = await this.user.getWhere('id', inputs.driver_id);
     if (driver) newDelivererActivity.driver = driver;
     newDelivererActivity.delivery_date = new Date(inputs.delivery_date);
-    newDelivererActivity.exit_time = new Date(inputs.exit_time);
-    newDelivererActivity.return_time = new Date(inputs.return_time);
-    newDelivererActivity.turns1_nb_carboys_delivered = inputs.turns1_nb_carboys_delivered;
-    newDelivererActivity.turns1_nb_unexpected_customers = inputs.turns1_nb_unexpected_customers;
-    newDelivererActivity.turns1_nb_customers_delivered = inputs.turns1_nb_customers_delivered;
-    newDelivererActivity.turns2_nb_carboys_delivered = inputs.turns2_nb_carboys_delivered;
-    newDelivererActivity.turns2_nb_unexpected_customers = inputs.turns2_nb_unexpected_customers;
-    newDelivererActivity.turns2_nb_customers_delivered = inputs.turns2_nb_customers_delivered;
+    newDelivererActivity.delivery_sites = deliverySites;
 
     return this.delivererActivityRepo
       .save(newDelivererActivity)
@@ -57,7 +72,7 @@ export class DelivererActivityService {
 
 
   async get(delivererActivityId: string): Promise<DelivererActivity> {
-    return this.getWhere('id', delivererActivityId );
+    return this.getWhere('id', delivererActivityId, ['delivery_sites', 'delivery_sites.contract']);
   }
 
   async update(delivererActivityId: string, inputs: UpdateDelivererActivityDto) {
@@ -78,14 +93,6 @@ export class DelivererActivityService {
       if (driver) foundDelivererActivity.driver = driver;
     }
     if (inputs.delivery_date) foundDelivererActivity.delivery_date = new Date(inputs.delivery_date);
-    if (inputs.exit_time) foundDelivererActivity.exit_time = new Date(inputs.exit_time);
-    if (inputs.return_time) foundDelivererActivity.return_time = new Date(inputs.return_time);
-    if (inputs.turns1_nb_carboys_delivered) foundDelivererActivity.turns1_nb_carboys_delivered = inputs.turns1_nb_carboys_delivered;
-    if (inputs.turns1_nb_unexpected_customers) foundDelivererActivity.turns1_nb_unexpected_customers = inputs.turns1_nb_unexpected_customers;
-    if (inputs.turns1_nb_customers_delivered) foundDelivererActivity.turns1_nb_customers_delivered = inputs.turns1_nb_customers_delivered;
-    if (inputs.turns2_nb_carboys_delivered) foundDelivererActivity.turns2_nb_carboys_delivered = inputs.turns2_nb_carboys_delivered;
-    if (inputs.turns2_nb_unexpected_customers) foundDelivererActivity.turns2_nb_unexpected_customers = inputs.turns2_nb_unexpected_customers;
-    if (inputs.turns2_nb_customers_delivered) foundDelivererActivity.turns2_nb_customers_delivered = inputs.turns2_nb_customers_delivered;
 
     await this.delivererActivityRepo.save(foundDelivererActivity);
     return { updated: true };
@@ -99,21 +106,18 @@ export class DelivererActivityService {
   }
 
   async createDelivererSlip(delivererActivityId: string, inputs: CreateDeliverySlipDto) {
-    const foundDelivererActivity = await this.getWhere('id', delivererActivityId);
+    // const foundDelivererActivity = await this.getWhere('id', delivererActivityId);
 
     const newDeliverySlip = new DeliverySlip();
-    newDeliverySlip.type = inputs.type;
-    newDeliverySlip.contract = inputs.contract;
-    newDeliverySlip.delivery_address = inputs.delivery_address;
-    newDeliverySlip.carboys_delivered = inputs.carboys_delivered;
-    newDeliverySlip.carboys_recovered_in_state = inputs.carboys_recovered_in_state;
-    newDeliverySlip.carboys_recovered_in_broken = inputs.carboys_recovered_in_broken;
-    newDeliverySlip.status = inputs.status;
-    newDeliverySlip.observation = inputs.observation;
-    const customer = await this.customer.getWhere('id', inputs.customer_id);
-    if (customer) newDeliverySlip.customer = customer;
-    newDeliverySlip.deliverer_activity = foundDelivererActivity;
-    newDeliverySlip.customer = await this.customer.getWhere('id', inputs.customer_id);
+    if (inputs.contract) newDeliverySlip.contract = inputs.contract;
+    if (inputs.stock) newDeliverySlip.stock = inputs.stock;
+    // newDeliverySlip.delivery_address = inputs.delivery_address;
+    if (inputs.contract) newDeliverySlip.carboys_delivered = inputs.carboys_delivered;
+    if (inputs.contract) newDeliverySlip.carboys_recovered_in_state = inputs.carboys_recovered_in_state;
+    if (inputs.contract) newDeliverySlip.carboys_recovered_in_broken = inputs.carboys_recovered_in_broken;
+    if (inputs.contract) newDeliverySlip.status = inputs.status;
+    if (inputs.observation) newDeliverySlip.observation = inputs.observation;
+    //newDeliverySlip.deliverer_activity = foundDelivererActivity;
     return await this.deliverySlipRepo.save(newDeliverySlip);
   }
 
@@ -121,9 +125,9 @@ export class DelivererActivityService {
     const foundDelivererActivity = await this.getWhere('id', delivererActivityId);
     return this.deliverySlipRepo.find({
       where: {
-        deliverer_activity: {
-          id: foundDelivererActivity.id,
-        },
+        // deliverer_activity: {
+        //   id: foundDelivererActivity.id,
+        // },
       },
       order: { created_at: 'DESC' },
     });
@@ -132,9 +136,11 @@ export class DelivererActivityService {
   async getDelivererSlip(delivererActivityId: string, deliverySlipId: string) {
     const foundDelivererActivity = await this.getWhere('id', delivererActivityId);
     const deliverySlip = await this.deliverySlipRepo.findOne({
-      where: { id: deliverySlipId, deliverer_activity: {
-        id:foundDelivererActivity.id
-        } },
+      where: {
+        // id: deliverySlipId, deliverer_activity: {
+        //   id: foundDelivererActivity.id,
+        // },
+      },
     });
     if (!deliverySlip) {
       return Promise.reject(new NotFoundException('No delivery slip found'));
@@ -147,15 +153,15 @@ export class DelivererActivityService {
     const foundDeliverySlip = await this.getDelivererSlip(delivererActivityId, deliverySlipId);
     console.log(foundDeliverySlip);
 
-    if (inputs.type) foundDeliverySlip.type = inputs.type;
-    if (inputs.contract) foundDeliverySlip.contract = inputs.contract;
-    if (inputs.delivery_address) foundDeliverySlip.delivery_address = inputs.delivery_address;
-    if (inputs.carboys_delivered) foundDeliverySlip.carboys_delivered = inputs.carboys_delivered;
-    if (inputs.carboys_recovered_in_state) foundDeliverySlip.carboys_recovered_in_state = inputs.carboys_recovered_in_state;
-    if (inputs.carboys_recovered_in_broken) foundDeliverySlip.carboys_recovered_in_broken = inputs.carboys_recovered_in_broken;
-    if (inputs.status) foundDeliverySlip.status = inputs.status;
-    if (inputs.observation) foundDeliverySlip.observation = inputs.observation;
-    if (inputs.customer_id) foundDeliverySlip.customer = await this.customer.getWhere('id', inputs.customer_id);
+    // if (inputs.type) foundDeliverySlip.type = inputs.type;
+    // if (inputs.contract) foundDeliverySlip.contract = inputs.contract;
+    // if (inputs.delivery_address) foundDeliverySlip.delivery_address = inputs.delivery_address;
+    // if (inputs.carboys_delivered) foundDeliverySlip.carboys_delivered = inputs.carboys_delivered;
+    // if (inputs.carboys_recovered_in_state) foundDeliverySlip.carboys_recovered_in_state = inputs.carboys_recovered_in_state;
+    // if (inputs.carboys_recovered_in_broken) foundDeliverySlip.carboys_recovered_in_broken = inputs.carboys_recovered_in_broken;
+    // if (inputs.status) foundDeliverySlip.status = inputs.status;
+    // if (inputs.observation) foundDeliverySlip.observation = inputs.observation;
+    // if (inputs.customer_id) foundDeliverySlip.customer = await this.customer.getWhere('id', inputs.customer_id);
 
     await this.deliverySlipRepo.save(foundDeliverySlip);
     return { updated: true };
@@ -172,10 +178,11 @@ export class DelivererActivityService {
   async getWhere(
     key: keyof DelivererActivity,
     value: any,
+    relations: string[] = [],
     throwsException = true,
   ): Promise<DelivererActivity | null> {
     return this.delivererActivityRepo
-      .findOne({ where: { [key]: value } })
+      .findOne({ where: { [key]: value }, relations })
       .then((delivererActivity) => {
         if (!delivererActivity && throwsException) {
           return Promise.reject(

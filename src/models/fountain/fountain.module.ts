@@ -13,5 +13,6 @@ import { Role } from '../role/role.entity';
   imports: [TypeOrmModule.forFeature([User, Fountain, UserQuarterPlanning,Role])],
   controllers: [FountainController],
   providers: [FountainService, UserService],
+  exports: [FountainService, UserService],
 })
 export class FountainModule {}

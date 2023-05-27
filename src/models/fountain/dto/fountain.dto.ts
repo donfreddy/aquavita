@@ -2,23 +2,15 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 export class CreateFountain {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: 'Client name',
-    required: true,
-    example: 'Orange Cameroon',
-  })
-  client_name: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'Deliverer id',
+    description: 'Serial number',
     required: true,
-    example: '0re8g0sfd9fg',
+    example: 'BON77878',
   })
-  deliverer_id: string;
+  model: string;
 
   @IsString()
   @IsNotEmpty()
@@ -32,21 +24,11 @@ export class CreateFountain {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'Vehicle',
+    description: 'Serial number',
     required: true,
-    example: '12500000',
+    example: 'BON77878',
   })
-  vehicule: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  @ApiProperty({
-    description: 'Reason',
-    required: false,
-    example: 'Some reason',
-  })
-  reason: string;
+  brand: string;
 
   @IsString()
   @IsNotEmpty()
@@ -58,4 +40,53 @@ export class CreateFountain {
   delivery_date: string;
 }
 
-export class UpdateFountain extends PartialType(CreateFountain) {}
+export class UpdateFountain extends PartialType(CreateFountain) {
+  @IsString()
+  @IsOptional()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Release date in stock',
+    required: false,
+    example: '2023-10-03',
+  })
+  release_date_in_stock: string;
+}
+
+export class InstallFountainDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Install date',
+    required: true,
+    example: '2023-10-03',
+  })
+  installation_date: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Maintenance interval',
+    required: true,
+    example: '2023-10-03',
+  })
+  maintenance_interval: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Upkeep date',
+    required: true,
+    example: '2023-10-03',
+  })
+  upkeep_date: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Installed by id',
+    required: true,
+    example: '1anewrfaw',
+  })
+  installed_by_id: string;
+}

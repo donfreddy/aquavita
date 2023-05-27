@@ -1,9 +1,8 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { QuarterTime } from '../../models/quater-time/entities/quarter-time.entity';
 import { AquavitaEntity } from './aquavita.entity';
 import { EnumQuarterPlanningStatus } from '../helpers';
 import { Task } from '../../models/task/entities/task.entity';
-import { User } from '../../models/user/entities/user.entity';
 import { UserQuarterPlanning } from './user-quarter-planning.entity';
 
 @Entity('quarter_planning')

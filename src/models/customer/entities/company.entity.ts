@@ -1,9 +1,10 @@
 import { Entity, Column, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Customer } from './customer.entity';
 import { Exclude } from 'class-transformer';
+import { WorkSchedule } from './work-schedule.entity';
 
 @Entity('companies')
-export class Company  {
+export class Company {
   @Exclude()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -27,18 +28,19 @@ export class Company  {
   trade_register_number: string;
 
   @Column({ nullable: true })
-  opening_time: Date;
+  accounting_general_account: string;
 
   @Column({ nullable: true })
-  pause_time_start: Date;
+  accounting_third_party_account: string;
 
-  @Column({ nullable: true })
-  pause_time_end: Date;
+  @Column({ default: false })
+  has_tva: boolean;
 
-  @Column({ nullable: true })
-  closing_time: Date;
-
-  @OneToOne(() => Customer )
+  @OneToOne(() => Customer)
   @JoinColumn()
   customer: Customer;
+
+  @OneToOne(() => WorkSchedule, { eager: true })
+  @JoinColumn()
+  work_schedule: WorkSchedule;
 }

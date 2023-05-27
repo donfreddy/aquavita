@@ -36,12 +36,23 @@ export const comparePasswords = async (
   return bcrypt.compare(userPassword, currentPassword);
 };
 
-export const slugOrIdWhereCondition = (
-  slug: string,
+export const codeOrIdWhereCondition = (
+  code: string,
 ): { [key: string]: string | number } => {
-  const id = parseInt(slug);
-  if (isNaN(id)) return { slug };
+  const id = parseInt(code);
+  if (isNaN(id)) return { code };
   return { id };
+};
+
+/**
+ * Generate unique code with prefix provide
+ *
+ * @param prefix Prefix
+ *
+ * @returns {Promise<string>} Hashed password
+ */
+export const getUniqueCode = (prefix: string): string => {
+  return `${prefix}${generateOtpCode(4)}`;
 };
 
 
@@ -132,16 +143,16 @@ export const createZipFile = async (files: string[]): Promise<any> => {
   try {
     const zip = new AdmZip();
     const outputFile = 'hello-world.zip';
-  
+
     zip.writeZip(outputFile);
     console.log(`Created ${outputFile} successfully`);
     zip.addFile('text/test.txt', Buffer.from('Hello World'));
-    zip.getEntries().forEach(function (zipEntry) {
+    zip.getEntries().forEach(function(zipEntry) {
       console.log(zipEntry.toString()); // outputs zip entries information
     });
-    const zipCount = zip.getEntryCount()
+    const zipCount = zip.getEntryCount();
     console.log(`Zip Count: ${zipCount}`);
-    
+
   } catch (e) {
     console.log(`Something went wrong. ${e}`);
   }

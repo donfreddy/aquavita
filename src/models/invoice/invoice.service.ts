@@ -6,6 +6,7 @@ import { CustomerService } from '../customer/customer.service';
 import { Invoice } from './entities/invoice.entity';
 import { CreateInvoiceDto, UpdateInvoiceDto } from './dto/invoice.dto';
 import { DeliverySlip } from '../deliverer-activity/entities/delivery-slip.entity';
+import { EnumInvoiceStatus } from '../../common/helpers';
 
 @Injectable()
 export class InvoiceService {
@@ -42,7 +43,7 @@ export class InvoiceService {
     newInvoice.payment_date = new Date(inputs.payment_date);
     newInvoice.settlement_date = new Date(inputs.settlement_date);
     newInvoice.customer = customer;
-    newInvoice.delivery_slips = deliverySlips;
+   // newInvoice.delivery_slips = deliverySlips;
 
     return this.invoiceRepo
       .save(newInvoice)
@@ -50,8 +51,9 @@ export class InvoiceService {
       .catch((error) => Promise.reject(error));
   }
 
-  async getAll() {
+  async getAll(invoiceStatus?: EnumInvoiceStatus) {
     return this.invoiceRepo.find({
+      where: invoiceStatus ? { status: invoiceStatus } : {},
       order: {
         created_at: 'DESC',
       },
@@ -72,7 +74,7 @@ export class InvoiceService {
           if (deliverySlip) deliverySlips.push(deliverySlip);
         },
       ));
-      foundInvoice.delivery_slips = deliverySlips;
+     // foundInvoice.delivery_slips = deliverySlips;
     }
     if (inputs.customer_id) foundInvoice.customer = await this.customer.getWhere('id', inputs.customer_id);
     if (inputs.type) foundInvoice.type = inputs.type;

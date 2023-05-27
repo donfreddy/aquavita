@@ -105,8 +105,8 @@ export class Invoice {
   })
   payment_method: EnumPaymentMethod;
 
-  @OneToMany(() => DeliverySlip, deliverySlip => deliverySlip.deliverer_activity)
-  delivery_slips: DeliverySlip[];
+  // @OneToMany(() => DeliverySlip, deliverySlip => deliverySlip.deliverer_activity)
+  // delivery_slips: DeliverySlip[];
 
   @CreateDateColumn()
   created_at: Date;

@@ -92,6 +92,11 @@ export enum EnumCustomerType {
   CONTRACT = 'Contrat',
 }
 
+export enum EnumCustomerTypology {
+  CONSUMPTION = 'Consommation',
+  CONTRACT = 'Contrat',
+}
+
 export enum EnumUpkeepType {
   FOUNTAIN = 'Fontaine',
   AIR_CONDITIONER = 'Climatiseur',
@@ -137,8 +142,7 @@ export enum EnumProductType {
 }
 
 export enum EnumInvoicingProfile {
-  CONTRACT = 'Contract',
+  CONTRACT = 'Contrat',
   CARBOYS = 'Bonbonnes',
   ENDOWMENT = 'Dotation',
 }
-

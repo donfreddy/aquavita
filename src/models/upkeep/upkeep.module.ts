@@ -10,9 +10,13 @@ import { CustomerService } from '../customer/customer.service';
 import { Customer } from '../customer/entities/customer.entity';
 import { Company } from '../customer/entities/company.entity';
 import { Role } from '../role/role.entity';
+import { Address } from '../customer/entities/address.entity';
+import { Contact } from '../customer/entities/contact.entity';
+import { WorkSchedule } from '../customer/entities/work-schedule.entity';
+import { Invoice } from '../invoice/entities/invoice.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Upkeep,Customer,Company,User,UserQuarterPlanning,Role])],
+  imports: [TypeOrmModule.forFeature([Upkeep,Customer,Company,User,UserQuarterPlanning,Role,Address,Contact,WorkSchedule,Invoice])],
   controllers: [UpkeepController],
   providers: [UpkeepService,UserService, CustomerService],
 })

@@ -3,53 +3,63 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { EnumDeliverySlipStatus } from '../../../common/helpers';
 
 export class CreateDeliverySlipDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: 'Delivery type',
-    example: 'C',
-  })
-  type: string;
 
   @IsString()
+  @IsOptional()
   @IsNotEmpty()
   @ApiProperty({
     description: 'Contract',
-    example: '46',
+    required: false,
+    example: 46,
   })
-  contract: string;
+  contract: number;
 
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
-    description: 'Delivery address',
-    example: 'Camtronics',
+    description: 'Contract',
+    required: false,
+    example: null,
   })
-  delivery_address: string;
+  stock: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     description: 'Carboys delivered',
-    example: '11',
+    example: 11,
   })
-  carboys_delivered: string;
+  carboys_delivered: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Tell if delivery slip is unanticipated',
+    required: false,
+    default: false,
+    example: false,
+  })
+  is_unanticipated: boolean;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     description: 'Carboys recovered in state',
-    example: '11',
+    required: false,
+    example: 11,
   })
-  carboys_recovered_in_state: string;
+  carboys_recovered_in_state: number;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     description: 'Carboys recovered in broken',
-    example: '0',
+    required: false,
+    example: 0,
   })
-  carboys_recovered_in_broken: string;
+  carboys_recovered_in_broken: number;
 
   @IsEnum(EnumDeliverySlipStatus)
   @IsOptional()
@@ -74,11 +84,11 @@ export class CreateDeliverySlipDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    description: 'Customer ID',
+    description: 'Delivery Site ID',
     required: true,
     example: '0re8g0sfd9fg',
   })
-  customer_id: string;
+  delivery_site_id: string;
 }
 
 export class UpdateDeliverySlipDto extends PartialType(CreateDeliverySlipDto) {
